@@ -17,7 +17,8 @@ dtype = {
 }
 
 # Use column definition
-rows = ["league_id", "team_id", "name"]
+rows = ["league_id", "team_id", "name", "country", "is_national", "founded", 
+        "venuename", "venuesurface", "venuecity", "venuecapacity"]
 
 def parse_rows(row):
     """
