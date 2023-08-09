@@ -1,6 +1,6 @@
 import dask.dataframe as dd
 
-def process_dask_dataframe(dask_dataframe: dd.DataFrame, parse_rows) -> list:
+def process_dask_dataframe(dask_dataframe: dd.DataFrame, parse_row) -> list:
     """
     Process the dask dataframe and create list containing objects
 
@@ -14,7 +14,7 @@ def process_dask_dataframe(dask_dataframe: dd.DataFrame, parse_rows) -> list:
     parsed_objects = []
     
     for _, row in dask_dataframe.iterrows():
-        parsed_objects.append(parse_rows(row))
+        parsed_objects.append(parse_row(row))
     return parsed_objects
 
 

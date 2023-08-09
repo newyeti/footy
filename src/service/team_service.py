@@ -1,42 +1,50 @@
 from model.team import Team
 import service.read_csv as csv_service
+from service.common_service import Service
 
-dtype = {
-    "league_id": "int32",
-    "team_id": "int32",
-    "name": "string[pyarrow]",
-    "code": "string[pyarrow]",
-    "country": "string[pyarrow]",
-    "is_national": "bool",
-    "founded": "int32",
-    "venuename": "string[pyarrow]",
-    "venuesurface": "string[pyarrow]",
-    "venueaddress": "string[pyarrow]",
-    "venuecity": "string[pyarrow]",
-    "venuecapacity": "int32",
-}
-
-# Use column definition
-rows = ["league_id", "team_id", "name", "country", "is_national", "founded", 
-        "venuename", "venuesurface", "venuecity", "venuecapacity"]
-
-def parse_rows(row):
-    """
-    Parse the row and create Team object
-
-    Args:
-        row (pandas.core.series.Series): Row from a csv file
-
-    Returns:
-       Team : A team object
-    """
-    return Team(row['league_id'], row['team_id'], row['name'])
-
-def read_csv(filepath: str) -> list[Team]:
-    csv_kwargs = {
+class TeamService(Service):
+    
+    def __init__(self) -> None:
+        self.dtype = {
+            "league_id": "int32",
+            "team_id": "int32",
+            "name": "string[pyarrow]",
+            "code": "string[pyarrow]",
+            "country": "string[pyarrow]",
+            "is_national": "bool",
+            "founded": "int32",
+            "venuename": "string[pyarrow]",
+            "venuesurface": "string[pyarrow]",
+            "venueaddress": "string[pyarrow]",
+            "venuecity": "string[pyarrow]",
+            "venuecapacity": "int32",
+        }
+    
+        self.columns = ["league_id", "team_id", "name", "code", "country", "is_national", "founded", 
+                    "venuename", "venuesurface", "venueaddress", "venuecity", "venuecapacity"]
+       
+    def read_file(self, filepath: str) -> list:
+        csv_kwargs = {
         "sep": ",",
-        "dtype": dtype,
-        "usecols": rows,
-    }
-    dask_dataframe =  csv_service.read_csv_with_dask(filepath, **csv_kwargs)
-    return csv_service.process_dask_dataframe(dask_dataframe, parse_rows)
+        "dtype": self.dtype,
+        "usecols": self.columns,
+        }
+        
+        dask_dataframe =  csv_service.read_csv_with_dask(filepath, **csv_kwargs)
+        return csv_service.process_dask_dataframe(dask_dataframe, self.parse_row)
+
+    @staticmethod
+    def parse_row(row):
+        return Team(row['league_id'], 
+                    row['team_id'], 
+                    row['name'],
+                    row['code'],
+                    row['founded'],
+                    row['venuename'],
+                    row['venuecapacity'],
+                    row['venuesurface'],
+                    row['venueaddress'],
+                    row['venuecity'],
+                    row['country'],
+                    row['is_national']
+                    )
