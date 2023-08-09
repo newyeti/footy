@@ -2,6 +2,7 @@ from model.team import Team
 import service.read_csv as csv_service
 from service.common_service import Service
 
+
 class TeamService(Service):
     
     def __init__(self) -> None:
@@ -23,7 +24,7 @@ class TeamService(Service):
         self.columns = ["league_id", "team_id", "name", "code", "country", "is_national", "founded", 
                     "venuename", "venuesurface", "venueaddress", "venuecity", "venuecapacity"]
        
-    def read_file(self, filepath: str) -> list:
+    def read_file(self, filepath: str) -> list[Team]:
         csv_kwargs = {
         "sep": ",",
         "dtype": self.dtype,

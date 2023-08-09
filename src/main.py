@@ -1,13 +1,38 @@
-import service.team_service as team_service
-from tools.json import Encoder
-import json
+import argparse
+import os.path
 from service.team_service import TeamService
 
+def main(args):
+    filepath = args.file
+    season = args.season
+    service = args.service
+    
+    if os.path.isfile(filepath) == False:
+        raise FileNotFoundError(f"File {filepath} not found.")
+    
+    match service:
+        case "team":
+            print(f"processing teams data from file={filepath}")
+            process_team_data(filepath, season)
+        case "fixture":
+            print(f"processing teams file {filepath}")
+
+def process_team_data(filepath: str, season: int):
+    team_service = TeamService()
+    teams = team_service.read_file(filepath)
+    for team in teams:
+        team.season = season
+    print(teams[0].to_json())
+
+
 if __name__ == "__main__":
-    try:
-        team_service = TeamService()
-        team_list = team_service.read_file("data/raw/pl/2022/team.csv")
-        json_string = json.dumps(team_list, indent=4, cls=Encoder)
-        print(json_string)
-    except FileNotFoundError as e:
-        print(e)
+    parser = argparse.ArgumentParser(description="Telemetry")
+    parser.add_argument("-service", choices=["team", "fixture"], required=True,
+                        help="Choose the service from the list: [team, fixture]")
+    parser.add_argument("-file", type=str, required=True, help="Filepath")
+    parser.add_argument("-season", type=int, required=True, help="Season")
+
+    args = parser.parse_args()
+    main(args)
+
+

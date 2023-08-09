@@ -1,4 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+import json
+from tools.json import Encoder
 
 @dataclass
 class Team:
@@ -14,3 +16,8 @@ class Team:
     city: str
     country: str
     is_national: bool
+    season: int = field(default=0)
+    
+    def to_json(self):
+        return json.dumps(self, indent=4, cls=Encoder)
+        
