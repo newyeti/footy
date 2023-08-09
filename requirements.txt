@@ -1,0 +1,4 @@
+pandas==1.5.2
+pytest==7.2.1
+dask==2023.8.0
+pyarrow>=1.0.0
