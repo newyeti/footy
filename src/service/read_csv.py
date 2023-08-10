@@ -36,5 +36,7 @@ def read_csv_with_dask(file_path: str, **kwargs: dict) -> dd.DataFrame:
         dask.dataframe.DataFrame: A Dask DataFrame representing the CSV data.
     """
     ddf = dd.read_csv(file_path, **kwargs)
+    nondff = ddf.fillna()
+    print(nondff.compute().head(1))
     return ddf
 
