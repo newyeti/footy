@@ -1,4 +1,5 @@
 import dask.dataframe as dd
+import pandas as pd
 
 def process_dask_dataframe(dask_dataframe: dd.DataFrame, parse_row) -> list:
     """
@@ -18,6 +19,11 @@ def process_dask_dataframe(dask_dataframe: dd.DataFrame, parse_row) -> list:
     return parsed_objects
 
 
+def remove_na_from_field(field_value):
+    if isinstance(field_value, str):
+        return field_value.replace('<NA>', '')
+    return field_value
+
 def read_csv_with_dask(file_path: str, **kwargs: dict) -> dd.DataFrame:
     """
     Read a CSV file using Dask and return a Dask DataFrame.
@@ -29,6 +35,6 @@ def read_csv_with_dask(file_path: str, **kwargs: dict) -> dd.DataFrame:
     Returns:
         dask.dataframe.DataFrame: A Dask DataFrame representing the CSV data.
     """
-    
-    return dd.read_csv(file_path, **kwargs)
+    ddf = dd.read_csv(file_path, **kwargs)
+    return ddf
 

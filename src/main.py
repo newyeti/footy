@@ -1,6 +1,7 @@
 import argparse
 import os.path
 from service.team_service import TeamService
+import infra.kafka as kafka
 
 def main(args):
     filepath = args.file
@@ -22,6 +23,7 @@ def process_team_data(filepath: str, season: int):
     teams = team_service.read_file(filepath)
     for team in teams:
         team.season = season
+    # kafka.send_message("newyeti.telemetry.teams.v1", teams[0].to_json())
     print(teams[0].to_json())
 
 
