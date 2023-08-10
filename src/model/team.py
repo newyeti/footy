@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field, asdict
 import json
 from tools.json import Encoder
-from tools.json import remove_none_fields
+from tools.json import remove_empty_elements
 
 @dataclass
 class Team:
@@ -21,5 +21,5 @@ class Team:
     
     def to_json(self):
         data_dict = asdict(self)
-        filtered_data = remove_none_fields(data_dict)
+        filtered_data = remove_empty_elements(data_dict)
         return json.dumps(filtered_data, indent=4, cls=Encoder)

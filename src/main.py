@@ -1,7 +1,7 @@
 import argparse
 import os.path
 from service.team_service import TeamService
-import infra.kafka as kafka
+from infra.kafka import KafkaProducerSingleton
 
 def main(args):
     filepath = args.file
@@ -20,10 +20,12 @@ def main(args):
 
 def process_team_data(filepath: str, season: int):
     team_service = TeamService()
+    procuder = KafkaProducerSingleton()
+    topic = "newyeti.telemetry.teams.v1"
     teams = team_service.read_file(filepath)
     for team in teams:
         team.season = season
-    kafka.send_message("newyeti.telemetry.teams.v1", teams[0].to_json())
+    procuder.send(topic=topic, message=teams[0].to_json())
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Telemetry")
@@ -34,5 +36,3 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     main(args)
-
-
