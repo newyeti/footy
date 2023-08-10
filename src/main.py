@@ -21,6 +21,7 @@ def main(args):
 def process_team_data(filepath: str, season: int):
     team_service = TeamService()
     procuder = KafkaProducerSingleton()
+    
     topic = "newyeti.telemetry.teams.v1"
     teams = team_service.read_file(filepath)
     for team in teams:
