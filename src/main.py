@@ -23,10 +23,8 @@ def process_team_data(filepath: str, season: int):
     teams = team_service.read_file(filepath)
     for team in teams:
         team.season = season
-    # kafka.send_message("newyeti.telemetry.teams.v1", teams[0].to_json())
-    print(teams[0].to_json())
-
-
+    kafka.send_message("newyeti.telemetry.teams.v1", teams[0].to_json())
+    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Telemetry")
     parser.add_argument("-service", choices=["team", "fixture"], required=True,

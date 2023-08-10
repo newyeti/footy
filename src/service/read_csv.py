@@ -38,4 +38,3 @@ def read_csv_with_dask(file_path: str, **kwargs: dict) -> dd.DataFrame:
     ddf = dd.read_csv(file_path, **kwargs)
     filtered_dff = ddf.fillna("")
     return filtered_dff
-
