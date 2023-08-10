@@ -3,10 +3,13 @@ import os.path
 from service.team_service import TeamService
 from infra.kafka import KafkaProducerSingleton
 
+producer = KafkaProducerSingleton()
+
 def main(args):
     filepath = args.file
     season = args.season
     service = args.service
+    
     
     if os.path.isfile(filepath) == False:
         raise FileNotFoundError(f"File {filepath} not found.")
@@ -20,13 +23,10 @@ def main(args):
 
 def process_team_data(filepath: str, season: int):
     team_service = TeamService()
-    procuder = KafkaProducerSingleton()
-    
-    topic = "newyeti.telemetry.teams.v1"
     teams = team_service.read_file(filepath)
     for team in teams:
         team.season = season
-    procuder.send(topic=topic, message=teams[0].to_json())
+    team_service.send(producer=producer, team=teams[0])
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Telemetry")

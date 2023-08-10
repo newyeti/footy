@@ -8,3 +8,7 @@ class Service(ABC):
     @abstractmethod
     def parse_row(row):
         pass
+    
+    @abstractmethod
+    def send(topic: str, message: str) -> bool:
+        pass

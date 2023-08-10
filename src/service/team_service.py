@@ -1,7 +1,7 @@
 from model.team import Team
 import service.read_csv as csv_service
 from service.common_service import Service
-
+from infra.kafka import KafkaProducerSingleton
 
 class TeamService(Service):
     
@@ -23,6 +23,8 @@ class TeamService(Service):
     
         self.columns = ["league_id", "team_id", "name", "code", "country", "is_national", "founded", 
                     "venuename", "venuesurface", "venueaddress", "venuecity", "venuecapacity"]
+
+        self.topic = "newyeti.telemetry.teams.v1"
        
     def read_file(self, filepath: str) -> list[Team]:
         csv_kwargs = {
@@ -49,3 +51,6 @@ class TeamService(Service):
                     row['country'],
                     row['is_national']
                     )
+
+    def send(self, producer: KafkaProducerSingleton, team: Team):
+        producer.send(topic=self.topic, message=team.to_json())
