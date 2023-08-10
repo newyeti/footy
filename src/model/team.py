@@ -20,4 +20,6 @@ class Team:
     season: int = field(default=0)
     
     def to_json(self):
-        return json.dumps(asdict(self), indent=4, cls=Encoder)
+        data_dict = asdict(self)
+        filtered_data = remove_none_fields(data_dict)
+        return json.dumps(filtered_data, indent=4, cls=Encoder)

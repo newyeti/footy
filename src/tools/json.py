@@ -7,4 +7,7 @@ class Encoder(JSONEncoder):
         return o.__dict__
 
 def remove_none_fields(obj):
-    return {key: value for key, value in obj.items() if value is not None}
+    def empty(x):
+        return x is None or x == "" or x == {} or x == []
+    
+    return {key: value for key, value in obj.items() if not empty(value)}
