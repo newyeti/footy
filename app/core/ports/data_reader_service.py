@@ -16,9 +16,7 @@ class FileReader(ABC):
 
 class DataReader(ABC):
     @abstractmethod
-    def read_file(self, filepath: str) -> list:
+    def read(self) -> list:
         pass
     
-    @abstractmethod
-    def parse_row(self, row) -> Any:
-        pass
+    

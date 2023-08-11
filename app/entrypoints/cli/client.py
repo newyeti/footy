@@ -10,19 +10,19 @@ sys.path.insert(0, parent_directory)
 import commands
 
 def main(args):
-    filepath = args.file
+    file = args.file
     season = args.season
     service = args.service
     
-    if os.path.isfile(filepath) == False:
-        raise FileNotFoundError(f"File {filepath} not found.")
+    if os.path.isfile(file) == False:
+        raise FileNotFoundError(f"File {file} not found.")
     
     match service:
         case "team":
-            print(f"processing teams data from file={filepath}")
-            commands.process_team_data(filepath=filepath, season=season)
+            print(f"processing teams data from file={file}")
+            commands.process_team_data(file=file, season=season)
         case "fixture":
-            print(f"processing teams file {filepath}")
+            print(f"processing teams file {file}")
 
 
 if __name__ == "__main__":

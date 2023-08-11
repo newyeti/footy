@@ -1,9 +1,9 @@
-from app.core.ports import data_service
+from app.core.ports import data_reader_service
 from typing import Any
 
 import dask.dataframe as ddf
 
-class CsvDataService(data_service.FileReader):
+class CsvDataService(data_reader_service.FileReader):
     """Csv data processing service"""
     
     def __init__(self) -> None:
