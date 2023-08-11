@@ -17,6 +17,7 @@ def kafka_producer_initializer(instance):
         bootstrap_servers = bootstrap_servers,
         client_id=client_id,
         sasl_mechanism=sasl_mechanism,
+        
         security_protocol=security_protocol,
         sasl_plain_username=sasl_plain_username,
         sasl_plain_password=sasl_plain_password,

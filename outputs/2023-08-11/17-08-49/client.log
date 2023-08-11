@@ -1,0 +1,2 @@
+[2023-08-11 17:08:49,251][kafka.producer.kafka][INFO] - Closing the Kafka producer with 0 secs timeout.
+[2023-08-11 17:08:49,251][kafka.producer.kafka][INFO] - Proceeding to force close the producer since pending requests could not be completed within timeout 0.
