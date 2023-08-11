@@ -1,0 +1,67 @@
+project_root/
+│
+├── app/
+│   ├── __init__.py
+│   │
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── interfaces/
+│   │   │   ├── __init__.py
+│   │   │   ├── user_repository.py
+│   │   │   ├── email_service.py
+│   │   │   └── ...
+│   │   │
+│   │   ├── entities/
+│   │   │   ├── __init__.py
+│   │   │   ├── user.py
+│   │   │   ├── post.py
+│   │   │   └── ...
+│   │   │
+│   │   └── usecases/
+│   │       ├── __init__.py
+│   │       ├── create_user.py
+│   │       ├── get_post.py
+│   │       └── ...
+│   │
+│   ├── adapters/
+│   │   ├── __init__.py
+│   │   ├── repositories/
+│   │   │   ├── __init__.py
+│   │   │   ├── user_repository_impl.py
+│   │   │   └── ...
+│   │   │
+│   │   ├── services/
+│   │   │   ├── __init__.py
+│   │   │   ├── email_service_impl.py
+│   │   │   └── ...
+│   │   │
+│   │   └── ...
+│   │
+│   └── interfaces/
+│       ├── __init__.py
+│       ├── web/
+│       │   ├── __init__.py
+│       │   ├── controllers.py
+│       │   └── ...
+│       │
+│       ├── cli/
+│       │   ├── __init__.py
+│       │   ├── commands.py
+│       │   └── ...
+│       │
+│       └── ...
+│
+├── config/
+│   ├── __init__.py
+│   ├── app_config.py
+│   └── database_config.py
+│
+├── tests/
+│   ├── __init__.py
+│   ├── test_user_repository.py
+│   ├── test_email_service.py
+│   ├── test_create_user.py
+│   └── ...
+│
+├── run.py
+└── README.md

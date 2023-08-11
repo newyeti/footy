@@ -1,15 +1,18 @@
-import argparse
+import sys
+import os
 import os.path
-from service.team_service import TeamService
-from infra.kafka import KafkaProducerSingleton
+import argparse
 
-producer = KafkaProducerSingleton()
+# Add the parent directory (app) to sys.path
+parent_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
+sys.path.insert(0, parent_directory)
+
+import commands
 
 def main(args):
     filepath = args.file
     season = args.season
     service = args.service
-    
     
     if os.path.isfile(filepath) == False:
         raise FileNotFoundError(f"File {filepath} not found.")
@@ -17,18 +20,15 @@ def main(args):
     match service:
         case "team":
             print(f"processing teams data from file={filepath}")
-            process_team_data(filepath, season)
+            commands.process_team_data(filepath=filepath, season=season)
         case "fixture":
             print(f"processing teams file {filepath}")
 
-def process_team_data(filepath: str, season: int):
-    team_service = TeamService()
-    teams = team_service.read_file(filepath)
-    for team in teams:
-        team.season = season
-    team_service.send(producer=producer, team=teams[0])
-    
+
 if __name__ == "__main__":
+    project_root = os.path.dirname(os.path.abspath("telemetry"))
+    print(project_root)
+    
     parser = argparse.ArgumentParser(description="Telemetry")
     parser.add_argument("-service", choices=["team", "fixture"], required=True,
                         help="Choose the service from the list: [team, fixture]")

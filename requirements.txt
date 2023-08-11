@@ -4,3 +4,4 @@ dask==2023.8.0
 pyarrow>=1.0.0
 kafka-python==2.0.2
 certifi==2023.7.22
+pydantic==2.1.1

@@ -1,4 +1,6 @@
 from json import JSONEncoder
+from typing import Any
+import json
 
 class Encoder(JSONEncoder):
     def default(self, o):
@@ -24,3 +26,10 @@ def remove_empty_elements(d):
         return [v for v in (remove_empty_elements(v) for v in d) if not empty(v)]
     else:
         return {k: v for k, v in ((k, remove_empty_elements(v)) for k, v in d.items()) if not empty(v)}
+
+
+def convert_to_json(obj: Any) -> str:
+    data_dict = dict(obj)
+    filtered_data = remove_empty_elements(data_dict)
+    return json.dumps(filtered_data, indent=4, cls=Encoder)
+

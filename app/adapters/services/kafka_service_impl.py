@@ -2,7 +2,7 @@ from kafka import KafkaProducer
 from kafka.errors import KafkaError
 import certifi
 import ssl
-from tools.decorators import singleton_with_initializer
+from app.core.tools.decorators import singleton_with_initializer
 
 def kafka_producer_initializer(instance):
     bootstrap_servers = ['flying-ghoul-13808-us1-kafka.upstash.io:9092']
@@ -29,7 +29,7 @@ class KafkaProducerSingleton:
     def __init__(self):
         pass
     
-    def send(self, topic: str, message: str):
+    def send(self, topic: str, message: str) -> None:
         future = self.producer.send(topic=topic, value=message)
         
         try:
