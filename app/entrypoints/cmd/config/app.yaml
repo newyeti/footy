@@ -1,0 +1,11 @@
+defaults:
+  - kafka
+  - service
+  - _self_
+  
+app:
+  name: Telemetry CLI
+  kafka: ${kafka}
+  service: ${service}
+  
+

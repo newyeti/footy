@@ -1,12 +1,14 @@
 from app.adapters.services.kafka_service_impl import KafkaProducerSingleton
 from app.adapters.services.data_reader_service_impl import TeamDataReader
 from app.core.exceptions.client_exception import ClientException
+from app.entrypoints.cmd.config import ServiceConfig
 
 class Switch:
     """Executes the date import service and sends data to kafka topic"""
     
-    def __init__(self, kafka_producer: KafkaProducerSingleton) -> None:
+    def __init__(self, kafka_producer: KafkaProducerSingleton, service_config: ServiceConfig) -> None:
         self.kafka_producer = kafka_producer
+        self.service_config = service_config
         self._services = {
             "team": self._team,
             "standings": self._standings,
@@ -16,9 +18,10 @@ class Switch:
             "fixture_player_stat": self._fixture_player_stat
         }
         
+        
     def execute(self, service: str, season: int, file: str) -> None:
         if service in self._services:
-            print(f"Executing service {service}")
+            print(f"Executing service: '{service}'")
             self._services[service](season=season, file=file)    
         else:
             raise ClientException(f"Invalid service name: {service}")
@@ -28,7 +31,7 @@ class Switch:
         teams = team_service.read()
         for team in teams:
             team.season = season
-        self.kafka_producer.send("newyeti.telemetry.teams.v1", teams[0])
+        self.kafka_producer.send(self.service_config.team.topic, teams[0])
     
     def _standings(self, season, file):
         pass

@@ -8,7 +8,7 @@ from hydra import compose, initialize_config_dir
 from pydantic import ValidationError
 
 # Add the parent directory (app) to sys.path
-current_directory = os.path.dirname(__file__)
+current_directory =  os.path.abspath(os.path.dirname(__file__))
 parent_directory = os.path.abspath(os.path.join(current_directory, "../../.."))
 sys.path.insert(0, parent_directory)
 
@@ -17,7 +17,7 @@ from app.adapters.services import kafka_service_impl
 from app.entrypoints.cmd.client.switch import Switch
 
 
-def load_config(config_dir: str, config_name: str, version_base = "1.2"):
+def load_config(config_dir: str, config_name: str, version_base = "1.3"):
     # Initialize the config directory for Hydra
     initialize_config_dir(config_dir=config_dir, version_base=version_base)
 
@@ -50,9 +50,9 @@ def main():
     if os.path.isfile(file) == False:
         raise FileNotFoundError(f"File {file} not found.")
     
-    app_config = load_config(f"{current_directory}/conf", "config")
+    app_config = load_config(f"{current_directory}/config", "app")
     kafka_producer = kafka_service_impl.KafkaProducerSingleton(app_config.kafka)
-    switch = Switch(kafka_producer=kafka_producer)
+    switch = Switch(kafka_producer=kafka_producer, service_config=app_config.service)
     switch.execute(service=service, season=season, file=file)
 
 if __name__ == "__main__":

@@ -1,0 +1,5 @@
+service:
+  team:
+    filename: team.csv
+    topic: newyeti.telemetry.teams.v1
+  
