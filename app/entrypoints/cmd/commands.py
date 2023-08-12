@@ -1,9 +1,6 @@
-from app.adapters.services import kafka_service_impl
 from app.adapters.services import data_reader_service_impl
 from app.core.tools.json import convert_to_json
 from typing import Any
-
-producer = kafka_service_impl.KafkaProducerSingleton()
 
 def process_team_data(file: str, season: int):
     team_service = data_reader_service_impl.TeamDataReader(file=file)

@@ -3,31 +3,24 @@ from kafka.errors import KafkaError
 import certifi
 import ssl
 from app.core.tools.decorators import singleton_with_initializer
+from app.entrypoints.cmd.config import KafkaConfig
 
-def kafka_producer_initializer(instance):
-    bootstrap_servers = ['flying-ghoul-13808-us1-kafka.upstash.io:9092']
-    client_id='newyeti-telemetry-producer'
-    sasl_mechanism='SCRAM-SHA-256'
-    security_protocol='SASL_SSL'
-    sasl_plain_username='Zmx5aW5nLWdob3VsLTEzODA4JK8Ko_8y0QKzRZOlFK6CSN1hNX6uJeoFsgqms64'
-    sasl_plain_password = '3d9f1534b0e847afa95090cc9d7d7d7e'
-    ssl_context=ssl.create_default_context(cafile=certifi.where())
-    
+def kafka_producer_initializer(instance, kafka_config):
     instance.producer = KafkaProducer(
-        bootstrap_servers = bootstrap_servers,
-        client_id=client_id,
-        sasl_mechanism=sasl_mechanism,
-        
-        security_protocol=security_protocol,
-        sasl_plain_username=sasl_plain_username,
-        sasl_plain_password=sasl_plain_password,
-        ssl_context=ssl_context,
+        bootstrap_servers = kafka_config.bootstrap_servers,
+        client_id = kafka_config.client_id,
+        sasl_mechanism = kafka_config.sasl_mechanism,
+        security_protocol = kafka_config.security_protocol,
+        sasl_plain_username = kafka_config.sasl_plain_username,
+        sasl_plain_password = kafka_config.sasl_plain_password,
+        ssl_context = ssl.create_default_context(cafile=certifi.where()),
         value_serializer = lambda v : str(v).encode("utf-8")
     ) 
 
 @singleton_with_initializer(kafka_producer_initializer)
 class KafkaProducerSingleton:
-    def __init__(self):
+    def __init__(self, kafka_config: KafkaConfig):
+        self.kafka_config = kafka_config
         pass
     
     def send(self, topic: str, message: str) -> None:
