@@ -16,3 +16,4 @@ class Team(BaseModel):
     is_national: bool = Field(..., title="IsNational")
     season: int = Field(default=0, title="Season")
 
+    

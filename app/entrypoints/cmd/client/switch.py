@@ -2,6 +2,7 @@ from app.adapters.services.kafka_service_impl import KafkaProducerSingleton
 from app.adapters.services.data_reader_service_impl import TeamDataReader
 from app.core.exceptions.client_exception import ClientException
 from app.entrypoints.cmd.config import ServiceConfig
+from app.core.tools.json import convert_to_json
 
 class Switch:
     """Executes the date import service and sends data to kafka topic"""
@@ -31,7 +32,7 @@ class Switch:
         teams = team_service.read()
         for team in teams:
             team.season = season
-        self.kafka_producer.send(self.service_config.team.topic, teams[0])
+        self.kafka_producer.send(self.service_config.team.topic, convert_to_json(teams[1]))
     
     def _standings(self, season, file):
         pass
