@@ -24,7 +24,6 @@ class TeamDataReader(DataReader):
         self.columns = ["league_id", "team_id", "name", "code", "country", "is_national", "founded", 
                     "venuename", "venuesurface", "venueaddress", "venuecity", "venuecapacity"]
         
-        
     def read(self) -> list[Team]:
         csv_kwargs = {
         "sep": ",",
@@ -53,4 +52,3 @@ class TeamDataReader(DataReader):
         dask_dataframe =  csv_service.read_file(self.file, **csv_kwargs)
         return csv_service.process_dataframe(dask_dataframe, parse_row)
 
-    

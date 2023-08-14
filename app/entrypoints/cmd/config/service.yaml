@@ -1,5 +1,7 @@
 service:
-  team:
+  teams:
     filename: team.csv
     topic: newyeti.telemetry.teams.v1
-  
+  fixtures:
+    filename: fixtures.csv
+    topic: newyeti.telemetry.fixtures.v1

@@ -14,7 +14,8 @@ class ServiceConfigDetail(BaseModel):
     topic: str
     
 class ServiceConfig(BaseModel):
-    team: ServiceConfigDetail
+    teams: ServiceConfigDetail
+    fixtures: ServiceConfigDetail
     
 class CliAppConfig(BaseModel):
     kafka: KafkaConfig
