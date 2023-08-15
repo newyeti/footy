@@ -35,8 +35,6 @@ def remove_empty_elements(d):
 
 def convert_to_json(obj: Any) -> str:
     data_dict = convert_to_dict(obj)
-    print(data_dict)
     filtered_data = remove_empty_elements(data_dict)
-    print(filtered_data)
     return json.dumps(filtered_data, indent=4, cls=Encoder)
 

@@ -1,0 +1,15 @@
+{
+  "bigQueryPartitionDecorator": false,
+  "connector.class": "com.wepay.kafka.connect.bigquery.BigQuerySinkConnector",
+  "defaultDataset": "football",
+  "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+  "key.converter.schemas.enable": false,
+  "keyfile": "",
+  "project": "newyeti",
+  "sanitizeTopics": true,
+  "timestampPartitionFieldName": "event_date",
+  "topic2TableMap": "newyeti.telemetry.fixtures.v1:fixtures",
+  "topics": "newyeti.telemetry.fixtures.v1",
+  "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+  "value.converter.schemas.enable": false
+}

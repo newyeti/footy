@@ -5,3 +5,4 @@ service:
   fixtures:
     filename: fixtures.csv
     topic: newyeti.telemetry.fixtures.v1
+  

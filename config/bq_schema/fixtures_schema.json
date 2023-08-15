@@ -1,0 +1,122 @@
+[
+  {
+    "name": "season",
+    "type": "INTEGER"
+  },
+  {
+    "name": "league_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "fixture_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "league_name",
+    "type": "STRING"
+  },
+  {
+    "name": "event_date",
+    "type": "TIMESTAMP"
+  },
+  {
+    "name": "first_half_start",
+    "type": "STRING"
+  },
+  {
+    "name": "second_half_start",
+    "type": "STRING"
+  },
+  {
+    "name": "round",
+    "type": "STRING"
+  },
+  {
+    "name": "status",
+    "type": "STRING"
+  },
+  {
+    "name": "elapsed",
+    "type": "INTEGER"
+  },
+  {
+    "name": "stadium",
+    "type": "STRING"
+  },
+  {
+    "name": "referee",
+    "type": "STRING"
+  },
+  {
+    "name": "home_team",
+    "type": "record",
+    "fields": [
+      {
+        "name": "team_id",
+        "type": "INTEGER"
+      },
+      {
+        "name": "team_name",
+        "type": "STRING"
+      },
+      {
+        "name": "team_logo",
+        "type": "STRING"
+      }
+    ]
+  },
+  {
+    "name": "away_team",
+    "type": "record",
+    "fields": [
+      {
+        "name": "team_id",
+        "type": "INTEGER"
+      },
+      {
+        "name": "team_name",
+        "type": "STRING"
+      },
+      {
+        "name": "team_logo",
+        "type": "STRING"
+      }
+    ]
+  },
+  {
+    "name": "goals",
+    "type": "record",
+    "fields": [
+      {
+        "name": "home_team",
+        "type": "INTEGER"
+      },
+      {
+        "name": "away_team",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "score",
+    "type": "record",
+    "fields": [
+      {
+        "name": "half_time",
+        "type": "STRING"
+      },
+      {
+        "name": "full_time",
+        "type": "STRING"
+      },
+      {
+        "name": "extra_time",
+        "type": "STRING"
+      },
+      {
+        "name": "penalty",
+        "type": "STRING"
+      }
+    ]
+  }
+]

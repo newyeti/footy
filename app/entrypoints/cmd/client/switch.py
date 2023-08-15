@@ -32,7 +32,7 @@ class Switch:
         teams = data_reader.read()
         for team in teams:
             team.season = season
-            self.kafka_producer.send(self.service_config.team.topic, 
+            self.kafka_producer.send(self.service_config.teams.topic, 
                                      convert_to_json(team))
     
     def _fixtures(self, season, file):

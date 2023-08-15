@@ -1,0 +1,50 @@
+[
+  {
+    "name": "season",
+    "type": "INTEGER"
+  },
+  {
+    "name": "league_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "team_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "name",
+    "type": "STRING"
+  },
+  {
+    "name": "code",
+    "type": "STRING"
+  },
+  {
+    "name": "founded",
+    "type": "INTEGER"
+  },
+  {
+    "name": "stadium_capacity",
+    "type": "INTEGER"
+  },
+  {
+    "name": "stadium_surface",
+    "type": "STRING"
+  },
+  {
+    "name": "street",
+    "type": "STRING"
+  },
+  {
+    "name": "city",
+    "type": "STRING"
+  },
+  {
+    "name": "country",
+    "type": "STRING"
+  },
+  {
+    "name": "is_national",
+    "type": "BOOLEAN"
+  }
+]
