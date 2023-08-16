@@ -36,24 +36,24 @@ def load_config(config_dir: str, config_name: str, version_base = "1.3"):
 
 def main():
     parser = argparse.ArgumentParser(description="Telemetry")
-    parser.add_argument("-service", choices=["teams", "fixtures"], required=True,
+    parser.add_argument("-service", choices=["teams", "fixtures", "fixture_events", "fixture_lineups", "fixture_player_stats"], required=True,
                         help="Choose the service from the list: [team, fixture]")
-    parser.add_argument("-file", type=str, required=True, help="Path of the file")
+    parser.add_argument("-loc", type=str, required=True, help="Path where files are located")
     parser.add_argument("-season", type=int, required=True, help="Year (4 digits)")
 
     args = parser.parse_args()
     
-    file = args.file
+    location = args.loc
     season = args.season
     service = args.service
     
-    if os.path.isfile(file) == False:
-        raise FileNotFoundError(f"File {file} not found.")
+    if os.path.isdir(location) == False:
+        raise FileNotFoundError(f"File {location} not found.")
     
     app_config = load_config(f"{current_directory}/config", "app")
     kafka_producer = kafka_service_impl.KafkaProducerSingleton(app_config.kafka)
     switch = Switch(kafka_producer=kafka_producer, service_config=app_config.service)
-    switch.execute(service=service, season=season, file=file)
+    switch.execute(service=service, season=season, loc=location)
 
 if __name__ == "__main__":
     main()

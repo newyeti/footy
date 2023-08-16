@@ -1,0 +1,58 @@
+[
+  {
+    "name": "season",
+    "type": "INTEGER"
+  },
+  {
+    "name": "event_date",
+    "type": "TIMESTAMP"
+  },
+  {
+    "name": "league_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "fixture_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "elapsed",
+    "type": "INTEGER"
+  },
+  {
+    "name": "elapsed_plus",
+    "type": "INTEGER"
+  },
+  {
+    "name": "team_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "team_name",
+    "type": "STRING"
+  },
+  {
+    "name": "player_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "player_name",
+    "type": "STRING"
+  },
+  {
+    "name": "assist_player_id",
+    "type": "STRING"
+  },
+  {
+    "name": "event_type",
+    "type": "STRING"
+  },
+  {
+    "name": "detail",
+    "type": "STRING"
+  },
+  {
+    "name": "comments",
+    "type": "STRING"
+  }
+]

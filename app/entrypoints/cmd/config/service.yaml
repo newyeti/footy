@@ -1,8 +1,19 @@
 service:
   teams:
-    filename: team.csv
+    filename: teams.csv
     topic: newyeti.telemetry.teams.v1
+  standings:
+    filename: standings.csv
+    topic: newyeti.telemetry.standings.v1
   fixtures:
     filename: fixtures.csv
     topic: newyeti.telemetry.fixtures.v1
-  
+  fixture_events:
+    filename: fixture-events.csv
+    topic: newyeti.telemetry.fixture-events.v1
+  fixture_lineups:
+    filename: fixture-lineups.csv
+    topic: newyeti.telemetry.fixture-lineups.v1
+  fixture_player_stats:
+    filename: fixture-player-stats.csv
+    topic: newyeti.telemetry.fixture-players-stat.v1

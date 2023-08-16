@@ -1,0 +1,64 @@
+[
+  {
+    "name": "season",
+    "type": "INTEGER"
+  },
+  {
+    "name": "league_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "fixture_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "event_date",
+    "type": "TIMESTAMP"
+  },
+  {
+    "name": "coach_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "coach_name",
+    "type": "STRING"
+  },
+  {
+    "name": "formation",
+    "type": "STRING"
+  },
+  {
+    "name": "team_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "startingXI",
+    "type": "record",
+    "mode": "repeated",
+    "fields": [
+      {
+        "name": "player_id",
+        "type": "INTEGER"
+      },
+      {
+        "name": "player_name",
+        "type": "STRING"
+      }
+    ]
+  },
+  {
+    "name": "substitutes",
+    "type": "record",
+    "mode": "repeated",
+    "fields": [
+      {
+        "name": "player_id",
+        "type": "INTEGER"
+      },
+      {
+        "name": "player_name",
+        "type": "STRING"
+      }
+    ]
+  }
+]

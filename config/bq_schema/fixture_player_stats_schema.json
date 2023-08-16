@@ -1,0 +1,212 @@
+[
+  {
+    "name": "season",
+    "type": "INTEGER"
+  },
+  {
+    "name": "league_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "fixture_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "updated_at",
+    "type": "TIMESTAMP"
+  },
+  {
+    "name": "player_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "player_name",
+    "type": "STRING"
+  },
+  {
+    "name": "team_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "team_name",
+    "type": "STRING"
+  },
+  {
+    "name": "number",
+    "type": "INTEGER"
+  },
+  {
+    "name": "position",
+    "type": "STRING"
+  },
+  {
+    "name": "rating",
+    "type": "FLOAT"
+  },
+  {
+    "name": "minutes_played",
+    "type": "INTEGER"
+  },
+  {
+    "name": "substitute",
+    "type": "INTEGER"
+  },
+  {
+    "name": "offsides",
+    "type": "INTEGER"
+  },
+  {
+    "name": "shots",
+    "type": "record",
+    "fields": [
+      {
+        "name": "total",
+        "type": "INTEGER"
+      },
+      {
+        "name": "on",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "goals",
+    "type": "record",
+    "fields": [
+      {
+        "name": "total",
+        "type": "INTEGER"
+      },
+      {
+        "name": "conceded",
+        "type": "INTEGER"
+      },
+      {
+        "name": "assists",
+        "type": "INTEGER"
+      },
+      {
+        "name": "saves",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "passes",
+    "type": "record",
+    "fields": [
+      {
+        "name": "total",
+        "type": "INTEGER"
+      },
+      {
+        "name": "key",
+        "type": "INTEGER"
+      },
+      {
+        "name": "accuracy",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "tackles",
+    "type": "record",
+    "fields": [
+      {
+        "name": "total",
+        "type": "INTEGER"
+      },
+      {
+        "name": "blocks",
+        "type": "INTEGER"
+      },
+      {
+        "name": "interceptions",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "duels",
+    "type": "record",
+    "fields": [
+      {
+        "name": "total",
+        "type": "INTEGER"
+      },
+      {
+        "name": "won",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "dribbles",
+    "type": "record",
+    "fields": [
+      {
+        "name": "attempts",
+        "type": "INTEGER"
+      },
+      {
+        "name": "success",
+        "type": "INTEGER"
+      },
+      {
+        "name": "past",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "fouls",
+    "type": "record",
+    "fields": [
+      {
+        "name": "drawn",
+        "type": "INTEGER"
+      },
+      {
+        "name": "committed",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "cards",
+    "type": "record",
+    "fields": [
+      {
+        "name": "yellow",
+        "type": "INTEGER"
+      },
+      {
+        "name": "red",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "penalty",
+    "type": "record",
+    "fields": [
+      {
+        "name": "won",
+        "type": "INTEGER"
+      },
+      {
+        "name": "committed",
+        "type": "INTEGER"
+      },
+      {
+        "name": "success",
+        "type": "INTEGER"
+      },
+      {
+        "name": "saved",
+        "type": "INTEGER"
+      }
+    ]
+  }
+]
