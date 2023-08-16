@@ -36,7 +36,7 @@ def load_config(config_dir: str, config_name: str, version_base = "1.3"):
 
 def main():
     parser = argparse.ArgumentParser(description="Telemetry")
-    parser.add_argument("-service", choices=["teams", "fixtures", "fixture_events", "fixture_lineups", "fixture_player_stats"], required=True,
+    parser.add_argument("-service", choices=["teams", "fixtures", "fixture_events", "fixture_lineups", "fixture_player_stats", "top_scorers"], required=True,
                         help="Choose the service from the list: [team, fixture]")
     parser.add_argument("-loc", type=str, required=True, help="Path where files are located")
     parser.add_argument("-season", type=int, required=True, help="Year (4 digits)")

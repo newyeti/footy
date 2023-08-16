@@ -79,7 +79,7 @@ class FixturePlayerStatDataReader(DataReader):
             fixture_player_stat_data = {
                 "league_id": row['league_id'],
                 "fixture_id": row['fixture_id'],
-                "updated_at": formatted_date,
+                "event_date": formatted_date,
                 "player_id": row['player_id'],
                 "player_name": row['player_name'],
                 "team_id": row['team_id'],

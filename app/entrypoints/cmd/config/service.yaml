@@ -16,4 +16,7 @@ service:
     topic: newyeti.telemetry.fixture-lineups.v1
   fixture_player_stats:
     filename: fixture-player-stats.csv
-    topic: newyeti.telemetry.fixture-players-stat.v1
+    topic: newyeti.telemetry.fixture-player-stats.v1
+  top_scorers:
+    filename: top-scorers.csv
+    topic: newyeti.telemetry.top_scorers.v1

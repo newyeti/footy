@@ -8,6 +8,7 @@ from app.core.model.fixture import Fixture
 from app.adapters.services.readers.fixture_lineup_data_reader import FixtureLineDataReader
 from app.adapters.services.readers.fixture_player_stat_data_reader import FixturePlayerStatDataReader
 from app.adapters.services.readers.fixture_event_data_reader import FixtureEventDataReader
+from app.adapters.services.readers.top_scorer_reader import TopScorerDataReader
 
 class Switch:
     """Executes the date import service and sends data to kafka topic"""
@@ -21,7 +22,8 @@ class Switch:
             "fixtures": self._fixtures,
             "fixture_events": self._fixture_events,
             "fixture_lineups": self._fixture_lineup,
-            "fixture_player_stats": self._fixture_player_stats
+            "fixture_player_stats": self._fixture_player_stats,
+            "top_scorers": self._top_scorers,
         }
         
     def execute(self, service: str, season: int, loc: str) -> None:
@@ -103,6 +105,14 @@ class Switch:
         for stat in player_stats:
             stat.season = season
         print(convert_to_json(player_stats[0]))
+        
+    def _top_scorers(self, season, loc):
+        file = loc + "/" + self.service_config.top_scorers.filename
+        data_reader = TopScorerDataReader(file=file)
+        top_scorers = data_reader.read()
+        for ts in top_scorers:
+            ts.season = season
+        print(convert_to_json(top_scorers[0]))
     
     def _fixture_event_date_mapper(self, fixtures : list[Fixture]) -> dict[Fixture]:
         fixture_event_date_map = {}

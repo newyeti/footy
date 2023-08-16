@@ -1,0 +1,124 @@
+[
+  {
+    "name": "season",
+    "type": "INTEGER"
+  },
+  {
+    "name": "league_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "player_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "player_name",
+    "type": "STRING"
+  },
+  {
+    "name": "firstname",
+    "type": "STRING"
+  },
+  {
+    "name": "lastname",
+    "type": "STRING"
+  },
+  {
+    "name": "position",
+    "type": "STRING"
+  },
+  {
+    "name": "nationality",
+    "type": "STRING"
+  },
+  {
+    "name": "team_id",
+    "type": "INTEGER"
+  },
+  {
+    "name": "team_name",
+    "type": "STRING"
+  },
+  {
+    "name": "games",
+    "type": "record",
+    "fields": [
+      {
+        "name": "appearences",
+        "type": "INTEGER"
+      },
+      {
+        "name": "minutes_played",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "goals",
+    "type": "record",
+    "fields": [
+      {
+        "name": "total",
+        "type": "INTEGER"
+      },
+      {
+        "name": "assists",
+        "type": "INTEGER"
+      },
+      {
+        "name": "conceded",
+        "type": "INTEGER"
+      },
+      {
+        "name": "saves",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "shots",
+    "type": "record",
+    "fields": [
+      {
+        "name": "total",
+        "type": "INTEGER"
+      },
+      {
+        "name": "on",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "penalty",
+    "type": "record",
+    "fields": [
+      {
+        "name": "won",
+        "type": "INTEGER"
+      },
+      {
+        "name": "committed",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "cards",
+    "type": "record",
+    "fields": [
+      {
+        "name": "yellow",
+        "type": "INTEGER"
+      },
+      {
+        "name": "second_yellow",
+        "type": "INTEGER"
+      },
+      {
+        "name": "red",
+        "type": "INTEGER"
+      }
+    ]
+  }
+]

@@ -20,6 +20,7 @@ class ServiceConfig(BaseModel):
     fixture_events: ServiceConfigDetail
     fixture_lineups: ServiceConfigDetail
     fixture_player_stats: ServiceConfigDetail
+    top_scorers: ServiceConfigDetail
     
 class CliAppConfig(BaseModel):
     kafka: KafkaConfig

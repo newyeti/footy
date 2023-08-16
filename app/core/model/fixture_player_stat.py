@@ -49,7 +49,7 @@ class FixturePlayerStat(BaseModel):
     season: int = Field(default=0, title="Season")
     league_id: int
     fixture_id: int
-    updated_at: str
+    event_date: str
     player_id: int
     player_name: str
     team_id: int
