@@ -18,7 +18,6 @@ class Switch:
         self.service_config = service_config
         self._services = {
             "teams": self._teams,
-            # "standings": self._standings,
             "fixtures": self._fixtures,
             "fixture_events": self._fixture_events,
             "fixture_lineups": self._fixture_lineup,
@@ -57,9 +56,6 @@ class Switch:
             self.kafka_producer.send(self.service_config.fixtures.topic, 
                                      convert_to_json(fixture))
     
-    def _standings(self, season, file):
-        pass
-    
     def _fixture_events(self, season, loc):
         print(f"Loading fixtures - starting")
         fixtures = self._find_fixtures(season, loc)
@@ -77,7 +73,7 @@ class Switch:
             event.season = season
             if event.fixture_id in fixture_map:
                 event.event_date = fixture_map[event.fixture_id]
-        print(convert_to_json(events))
+            self.kafka_producer.send(self.service_config.fixture_events.topic, convert_to_json(event))
     
     def _fixture_lineup(self, season, loc):
         print(f"Loading fixtures - starting")
@@ -96,7 +92,7 @@ class Switch:
             lineup.season = season
             if lineup.fixture_id in fixture_map:
                 lineup.event_date = fixture_map[lineup.fixture_id]
-        print(convert_to_json(lineups[0]))
+            self.kafka_producer.send(self.service_config.fixture_lineups.topic, convert_to_json(lineup))
     
     def _fixture_player_stats(self, season, loc):
         file=loc+"/"+self.service_config.fixture_player_stats.filename
@@ -104,7 +100,7 @@ class Switch:
         player_stats = data_reader.read()
         for stat in player_stats:
             stat.season = season
-        print(convert_to_json(player_stats[0]))
+            self.kafka_producer.send(self.service_config.fixture_player_stats.topic, convert_to_json(stat))
         
     def _top_scorers(self, season, loc):
         file = loc + "/" + self.service_config.top_scorers.filename
@@ -112,7 +108,7 @@ class Switch:
         top_scorers = data_reader.read()
         for ts in top_scorers:
             ts.season = season
-        print(convert_to_json(top_scorers[0]))
+            self.kafka_producer.send(self.service_config.top_scorers.topic, convert_to_json(ts))
     
     def _fixture_event_date_mapper(self, fixtures : list[Fixture]) -> dict[Fixture]:
         fixture_event_date_map = {}
