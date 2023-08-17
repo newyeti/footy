@@ -88,19 +88,25 @@ class Switch:
         file=loc+"/"+self.service_config.fixture_lineups.filename
         data_reader = FixtureLineDataReader(file=file)
         lineups = data_reader.read()
+        count = 0
         for lineup in lineups:
             lineup.season = season
             if lineup.fixture_id in fixture_map:
                 lineup.event_date = fixture_map[lineup.fixture_id]
             self.kafka_producer.send(self.service_config.fixture_lineups.topic, convert_to_json(lineup))
+            count += 1
+        print(f"Total messages sent to topic {self.service_config.fixture_lineups.topic}: {count}")
     
     def _fixture_player_stats(self, season, loc):
         file=loc+"/"+self.service_config.fixture_player_stats.filename
         data_reader = FixturePlayerStatDataReader(file=file)
         player_stats = data_reader.read()
+        count = 0
         for stat in player_stats:
             stat.season = season
             self.kafka_producer.send(self.service_config.fixture_player_stats.topic, convert_to_json(stat))
+            count += 1
+        print(f"Total messages sent to topic {self.service_config.fixture_lineups.topic}: {count}")
         
     def _top_scorers(self, season, loc):
         file = loc + "/" + self.service_config.top_scorers.filename

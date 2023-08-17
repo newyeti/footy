@@ -7,9 +7,10 @@
   "keyfile": "",
   "project": "newyeti",
   "sanitizeTopics": true,
+  "threadPoolSize": 20,
   "timestampPartitionFieldName": "event_date",
-  "topic2TableMap": "newyeti.telemetry.fixtures.v1:fixtures,newyeti.telemetry.fixture-events.v1:fixture_events,newyeti.telemetry.fixture-lineups.v1:fixture_lineups,newyeti.telemetry.fixture-player-stats.v1:fixture_player_stats",
-  "topics": "newyeti.telemetry.fixtures.v1,newyeti.telemetry.fixture-events.v1,newyeti.telemetry.fixture-lineups.v1,newyeti.telemetry.fixture-player-stats.v1",
+  "topic2TableMap": "newyeti.telemetry.fixtures.v1:fixtures,newyeti.telemetry.fixture-events.v1:fixture_events,newyeti.telemetry.fixture-player-stats.v1:fixture_player_stats,newyeti.telemetry.fixture-lineups.v1:fixture_lineups",
+  "topics": "newyeti.telemetry.fixtures.v1,newyeti.telemetry.fixture-events.v1,newyeti.telemetry.fixture-player-stats.v1,newyeti.telemetry.fixture-lineups.v1",
   "value.converter": "org.apache.kafka.connect.json.JsonConverter",
   "value.converter.schemas.enable": false
 }
