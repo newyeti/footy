@@ -50,7 +50,7 @@ class Switch:
         return fixtures
     
     def _fixtures(self, season, loc):
-        fixtures = self._find_fixtures(self, season, loc)
+        fixtures = self._find_fixtures(season, loc)
         for fixture in fixtures:
             fixture.season = season
             self.kafka_producer.send(self.service_config.fixtures.topic, 

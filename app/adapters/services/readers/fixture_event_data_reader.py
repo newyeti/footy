@@ -17,7 +17,7 @@ class FixtureEventDataReader(DataReader):
             "team_name": "string[pyarrow]",
             "player_id": "int32",
             "player_name": "string[pyarrow]",
-            "assist_player_id": "string[pyarrow]",
+            "assist_player_id": "int",
             "assisted_by": "string[pyarrow]",
             "type": "string[pyarrow]",
             "detail": "string[pyarrow]",

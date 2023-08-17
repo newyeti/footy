@@ -19,4 +19,4 @@ service:
     topic: newyeti.telemetry.fixture-player-stats.v1
   top_scorers:
     filename: top-scorers.csv
-    topic: newyeti.telemetry.top_scorers.v1
+    topic: newyeti.telemetry.top-scorers.v1

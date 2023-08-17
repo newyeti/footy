@@ -1,7 +1,5 @@
-from app.core.model.team import Team
 from app.adapters.services.csv_data_service import CsvDataService
 from app.core.ports.data_reader_service import DataReader
-from app.core.model.fixture_event import FixtureEvent
 from app.core.model.fixture_lineup import FixtureLineup, Player
 
 class FixtureLineDataReader(DataReader):

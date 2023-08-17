@@ -1,12 +1,10 @@
-from datetime import datetime
+from app.core.tools import utils
 from pydantic import BaseModel, Field
 from typing import Optional
 
-# league_id,fixture_id,elapsed,elapsed_plus,team_id,team_name,player_id,player,assist_player_id,assisted_by,type,detail,comments
-
 class FixtureEvent(BaseModel):
     season: int = Field(default=0,title= "Season")
-    event_date: str = Field(default=datetime.now(),title= "Season")
+    event_date: str = Field(default=utils.current_date_str(),title= "Season")
     league_id: int
     fixture_id: int
     elapsed: int
@@ -15,7 +13,7 @@ class FixtureEvent(BaseModel):
     team_name: str
     player_id: int
     player_name: str
-    assist_player_id: Optional[str]
+    assist_player_id: Optional[int]
     assist_player_name: Optional[str]
     event_type: str
     detail: Optional[str]

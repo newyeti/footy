@@ -41,7 +41,7 @@
   },
   {
     "name": "assist_player_id",
-    "type": "STRING"
+    "type": "INTEGER"
   },
   {
     "name": "event_type",

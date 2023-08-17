@@ -4,7 +4,7 @@ from app.core.ports.data_reader_service import DataReader
 from app.core.model.fixture_event import FixtureEvent
 from app.core.model.fixture_player_stat import FixturePlayerStat
 from datetime import datetime
-import time
+from app.core.tools.utils import current_date_str
 
 class FixturePlayerStatDataReader(DataReader):
     
@@ -70,10 +70,9 @@ class FixturePlayerStatDataReader(DataReader):
         
         def parse_row(row):
             epoch_timestamp = row['updated_at']
-            formatted_date = time.time()
-                        
+            formatted_date = current_date_str()
             if epoch_timestamp > 0:
-                datetime_obj = datetime.fromtimestamp(time.time())
+                datetime_obj = datetime.fromtimestamp(epoch_timestamp)
                 formatted_date = datetime_obj.strftime('%Y-%m-%dT%H:%M:%S+00:00')
             
             fixture_player_stat_data = {

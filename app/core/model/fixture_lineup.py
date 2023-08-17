@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from datetime import datetime
+from app.core.tools import utils
 from typing import Optional
 
 class Player(BaseModel):
@@ -10,7 +10,7 @@ class FixtureLineup(BaseModel):
     season: int = Field(default=0, title="Season")
     league_id : int
     fixture_id: int
-    event_date: str = Field(default=datetime.now(),title= "Season")
+    event_date: str = Field(default=utils.current_date_str(),title= "Season")
     coach_id: int
     coach_name: str
     formation: str
