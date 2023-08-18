@@ -1,0 +1,64 @@
+
+---
+kafka-api:
+  uri: "https://api.upstash.com/v2/kafka"
+  clusters:
+  - api-key: ${NEWYETI_PROD_CLUSTER1_KEY}
+    email: ${NEWYETI_PROD_CLUSTER1_EMAIL}
+    cluster: 
+      name: newyeti-prod-cluster1
+      region: us-east-1
+      multizone: true
+    topics:
+    - newyeti.source.teams.v1
+    - newyeti.source.fixtures.v1
+    connectors:
+    - newyeti.mongo.football.teams.sink
+
+  - api-key: ${NEWYETI_PROD_CLUSTER2_KEY}
+    email: ${NEWYETI_PROD_CLUSTER2_EMAIL}
+    cluster: 
+      name: newyeti-prod-cluster1
+      region: us-east-1
+      multizone: true
+    topics:
+    - newyeti.source.teams.v1
+    - newyeti.source.fixtures.v1
+    connectors:
+    - newyeti.mongo.football.teams.sink
+
+  - api-key: ${NEWYETI_PROD_CLUSTER3_KEY}
+    email: ${NEWYETI_PROD_CLUSTER3_EMAIL}
+    cluster: 
+      name: newyeti-prod-cluster1
+      region: us-east-1
+      multizone: true
+    topics:
+    - newyeti.source.teams.v1
+    - newyeti.source.fixtures.v1
+    connectors:
+    - newyeti.mongo.football.teams.sink
+
+  topic_configs:
+  - name: newyeti.source.teams.v1
+    partitions: 2
+    retention_time: 604800000
+    retention_size: 268435456
+    max_message_size: 1048576
+    cleanup_policy: delete
+
+  - name: newyeti.source.fixtures.v1
+    partitions: 2
+    retention_time: 604800000
+    retention_size: 268435456
+    max_message_size: 1048576
+    cleanup_policy: delete
+
+  connector_configs:
+  - name: newyeti.mongo.football.teams.sink
+    properties:
+      collection: teams
+      connection.uri: mongodb+srv://{MONGO_USERNAME}:{MONGO_PASSWORD@{MONGO_HOSTNAME}
+      connector.class: com.mongodb.kafka.connect.MongoSinkConnector
+      database: football
+      topics: newyeti.source.teams.v1

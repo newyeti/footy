@@ -4,6 +4,7 @@ import os
 import requests
 import sys
 import logging
+import yaml
 
 # Add the parent directory (app) to sys.path
 current_directory =  os.path.abspath(os.path.dirname(__file__))
@@ -16,21 +17,39 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('infra')
 
+# Load YAML data from a file
+with open('infra/kaka_cluster_config.yaml', 'r') as yaml_file:
+    yaml_data = yaml_file.read()
+
+env_data = os.path.expandvars(yaml_data)
+
+# Parse YAML data
+parsed_yaml = yaml.safe_load(env_data)
+
+kafka_api_config = parsed_yaml['kafka-api']
+kafka_api_url = kafka_api_config['uri']
+
+kafka_clusters = kafka_api_config['clusters']
+kafka_topic_configs = kafka_api_config['topic_configs']
+kafka_connector_configs = kafka_api_config['connector_configs']
+
+
 def handle_error(response: requests.Response):
     if response.status_code == 400:
         raise ClientException(response.content.decode("utf-8"))
     elif response.status_code == 401:
         raise ClientException(json.loads(response.content))
 
-def create_kafka_cluster(auth: tuple) -> str:
-    data = '{"name":"newyeti-prod-cluster1","region":"us-east-1","multizone":true}'
-    response = requests.post('https://api.upstash.com/v2/kafka/cluster', data=data, auth=auth)
+def create_kafka_cluster(auth: tuple, data: dict) -> str:
+    print(json.dumps(data))
+    response = requests.post('https://api.upstash.com/v2/kafka/cluster', 
+                             data=json.dumps(data), auth=auth)
     handle_error(response)
     
     response_data = json.loads(response.content)
     return response_data['cluster_id']
 
-def get_cluster_id(auth: tuple) -> str:
+def get_cluster_info(auth: tuple) -> tuple:
     response = requests.get('https://api.upstash.com/v2/kafka/clusters', auth=auth)
     handle_error(response)
     response_data = json.loads(response.content)
@@ -38,31 +57,34 @@ def get_cluster_id(auth: tuple) -> str:
     if response_data is not None and len(response_data) > 0:
         cluster_data = response_data[0]
         cluster_id = cluster_data['cluster_id']
-        return cluster_id
-    return ""
+        cluster_name = cluster_data['name']
+        return (cluster_id, cluster_name)
+    return ()
 
 def create_kafka_topic(auth: tuple, cluster_id: str, topic_name: str) -> str:
     topics = list_kafka_topics(auth=auth, cluster_id=cluster_id)
     
-    for topic in topics:
-        if topic_name == topic['topic_name']:
-            raise ClientException(f"Topic {topic_name} already exists in the cluster.")
-        
-    data = {
-        "name": topic_name,
-        "partitions": 2,
-        "retention_time": 604800000,
-        "retention_size": 268435456,
-        "max_message_size": 1048576,
-        "cleanup_policy": "delete",
-        "cluster_id": cluster_id
-        }
+    topic_name = [value for dct in topics for value in dct.values() if value == topic_name]
     
-    response = requests.post('https://api.upstash.com/v2/kafka/topic', data=json.dumps(data), auth=auth)
-    handle_error(response)
-    logging.debug(response_data)
-    response_data = json.loads(response.content)
-    return response_data['topic_id']
+    if topic_name is not None or len(topic_name) > 0 :
+        logging.info(f"Topic: {topic_name} already exists in the clustur: {cluster_id}.")
+        return topic_name
+    else:
+        data = {
+            "name": topic_name,
+            "partitions": 2,
+            "retention_time": 604800000,
+            "retention_size": 268435456,
+            "max_message_size": 1048576,
+            "cleanup_policy": "delete",
+            "cluster_id": cluster_id
+            }
+        
+        response = requests.post('https://api.upstash.com/v2/kafka/topic', data=json.dumps(data), auth=auth)
+        handle_error(response)
+        logging.debug(response_data)
+        response_data = json.loads(response.content)
+        return response_data['topic_id']
 
     
 def list_kafka_topics(auth: tuple, cluster_id: str) -> None:
@@ -72,28 +94,59 @@ def list_kafka_topics(auth: tuple, cluster_id: str) -> None:
     logging.debug(response_data)
     return response_data
 
-def create_kafka_connector(auth: tuple):
-    pass
+def create_kafka_connector(auth: tuple, data: dict) -> str:
+    # data = {
+    #     "name": "newyeti.mongo.football.teams.sink",
+    #     "cluster_id": cluster_id,
+    #     "properties": {
+    #         "collection": "teams",
+    #         "connection.uri": "mongodb+srv://cruser:vRixO98gZsIClFfA@uefa-cluster-0.rj6sj7h.mongodb.net/",
+    #         "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
+    #         "database": "football",
+    #         "topics": "newyeti.source.teams.v1"
+    #         }
+    #     }
+
+    response = requests.post('https://api.upstash.com/v2/kafka/connector', 
+                             data=json.dumps(data), auth=auth)
+    handle_error(response=response)
+    response_data = json.loads(response.content)
+    return response_data['connector_id']
+    
 
 def get_kafka_connector(auth: tuple):
     pass
 
 def main():
-    api_key = os.environ['UPSTASH_API_KEY']
-    email =  os.environ['EMAIL_ADDRESS']
-    auth=(email, api_key)
+    if kafka_clusters is not None:
+        logging.warn("Kafka cluster information is not available")
+        return
     
     try:
-        cluster_id = get_cluster_id(auth)
-        if cluster_id is None or cluster_id == "":
-            cluster_id = create_kafka_cluster()
-        logging.info(f"cluster_id: {cluster_id}")
-        
-        create_kafka_topic(auth=auth, cluster_id=cluster_id, topic_name="newyeti.source.teams.v1")
-        
-        
+        for kafka_cluster in kafka_clusters:
+            cluster_api_key = kafka_cluster['api-key']
+            cluster_api_email = kafka_cluster['email']
+            cluster = kafka_cluster['cluster']
+            if cluster_api_key == None or cluster_api_key == "":
+                raise ClientException("ApiKey is required to access the kafka api.")
+            if cluster_api_email == None or cluster_api_email == "":
+                raise ClientException("Email is required to access the kafka api.")
+            
+            auth = (cluster_api_email, cluster_api_key)
+            cluster_info = get_cluster_info(auth)
+            logging.info(f"current cluster: {cluster_info}")
+            
+            # Create new cluster if it does not exists
+            if len(cluster_info) == 0:
+                cluster_id = create_kafka_cluster(auth=auth, data=cluster)
+                logging.info(f"cluster_id: {cluster_id}")
+                # create_kafka_topic(auth=auth, 
+                #                    cluster_id=cluster_id, 
+                #                    topic_name="newyeti.source.teams.v1")
+                # create_kafka_connector(auth=auth, cluster_id=cluster_id)
+    
     except ClientException as e:
-        logging.error(e)
-
+        logging.error(e)  
+    
 if __name__ == "__main__":
     main()

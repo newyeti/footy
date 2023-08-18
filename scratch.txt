@@ -65,3 +65,27 @@ project_root/
 │
 ├── run.py
 └── README.md
+
+python3 app/entrypoints/cmd/main.py -service teams  -loc "/Users/sachindra.maharjan/Downloads/2022" -season 2022
+python3 app/entrypoints/cmd/main.py -service fixtures  -loc "/Users/sachindra.maharjan/Downloads/2022" -season 2022
+python3 app/entrypoints/cmd/main.py -service fixture_events  -loc "/Users/sachindra.maharjan/Downloads/2022" -season 2022
+python3 app/entrypoints/cmd/main.py -service fixture_lineups  -loc "/Users/sachindra.maharjan/Downloads/2022" -season 2022
+python3 app/entrypoints/cmd/main.py -service fixture_player_stats  -loc "/Users/sachindra.maharjan/Downloads/2022" -season 2022
+python3 app/entrypoints/cmd/main.py -service top_scorers  -loc "/Users/sachindra.maharjan/Downloads/2022" -season 2022
+
+
+python3 app/entrypoints/cmd/main.py -service teams  -loc "data/raw/pl/2022" -season 2022
+python3 app/entrypoints/cmd/main.py -service fixtures  -loc "data/raw/pl/2022" -season 2022
+python3 app/entrypoints/cmd/main.py -service fixture_events  -loc "data/raw/pl/2022" -season 2022
+python3 app/entrypoints/cmd/main.py -service fixture_lineups  -loc "data/raw/pl/2022" -season 2022
+python3 app/entrypoints/cmd/main.py -service fixture_player_stats  -loc "data/raw/pl/2022" -season 2022
+python3 app/entrypoints/cmd/main.py -service top_scorers  -loc "data/raw/pl/2022" -season 2022
+
+export NEWYETI_PROD_CLUSTER1_KEY=da41d026-d06a-4fe5-be86-26e2c544d9f3
+export NEWYETI_PROD_CLUSTER1_EMAIL=sachindra.maharjan4@gmail.com
+export NEWYETI_PROD_CLUSTER2_KEY=e83667b8-8e28-45ae-9726-3a08272d0005
+export NEWYETI_PROD_CLUSTER2_EMAIL=sachindra.maharjan4@gmail.com
+export NEWYETI_PROD_CLUSTER3_KEY=22f6b2d1-25af-4281-8936-175e0c974938
+export NEWYETI_PROD_CLUSTER3_EMAIL=sachindra.maharjan4@gmail.com
+
+python3 infra/setup_kafka_cluster.py
