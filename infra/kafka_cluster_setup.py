@@ -1,15 +1,12 @@
 
 import json
 import os
-import requests
 import sys
 import logging
 import time
-import yaml
 import asyncio
 import aiohttp
-from dataclasses import dataclass
-from typing import re, Awaitable, Any
+from typing import Any
 
 # Add the parent directory (app) to sys.path
 current_directory =  os.path.abspath(os.path.dirname(__file__))
@@ -17,86 +14,18 @@ parent_directory = os.path.abspath(os.path.join(current_directory, ".."))
 sys.path.insert(0, parent_directory)
 
 from app.core.exceptions.client_exception import ClientException
-from infra.setup_kafka_cluster import kafka_connector_configs
+from infra.kafka_cluster_utils import (
+    Request,
+    load_config,  
+    validate_cluster, 
+    get_request, 
+    post_request
+)
 
 logging.basicConfig(level=logging.INFO, 
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('infra')
-
-@dataclass
-class Request:
-    id: str
-    method: str
-    url: str
-    data: str
-    username: str
-    password: str
     
-async def run_sequence(*functions: Awaitable[Any]) -> None:
-    for function in functions:
-        await function
-
-async def run_parallel(*functions: Awaitable[Any]) -> None:
-    await asyncio.gather(*functions)
-        
-def load_config() -> dict[str, dict]:
-    # Load YAML data from a file
-    with open('infra/kaka_cluster_config.yaml', 'r') as yaml_file:
-        yaml_data = yaml_file.read()
-
-    env_data = os.path.expandvars(yaml_data)
-    # Parse YAML data
-    parsed_yaml = yaml.safe_load(env_data)
-    return parsed_yaml['kafka_api']
-
-def validate_cluster(cluster: dict):
-    cluster_api_key = cluster['api_key']
-    cluster_api_email = cluster['email']
-    if cluster_api_key == None or cluster_api_key == "":
-        raise ClientException("ApiKey is required to access the kafka api.")
-    if cluster_api_email == None or cluster_api_email == "":
-        raise ClientException("Email is required to access the kafka api.")
-
-async def get_request(session: aiohttp.ClientSession, url: str, username: str, password: str) -> Any:
-    auth = aiohttp.BasicAuth(login=username, password=password, encoding="utf-8")
-    
-    try:
-        async with session.get(url=url, auth=auth, ssl=False) as response:
-            response_content_type = response.headers.get('Content-Type')
-            if 'json' in response_content_type:
-                response_data = await response.json()
-            else:
-                response_data = await response.text()
-            return response_data
-    except aiohttp.ClientError as e:
-        return {"error": f"Error getting data from {url}: {e}"}
-    
-async def post_request(session: aiohttp.ClientSession, request: Request):
-    headers = {
-        'Content-Type': 'application/json'
-    }
-    
-    auth = aiohttp.BasicAuth(login=request.username, password=request.password, encoding="utf-8")
-    
-    try:
-        async with session.post(url=request.url,
-                                data=request.data,
-                                headers=headers,
-                                auth=auth, 
-                                ssl=False) as response:
-            response_content_type = response.content_type
-            
-            if 'json' in response_content_type:
-                response_data = await response.json()
-            else:
-                response_data = await response.text()
-                
-            return response_data
-        
-    except aiohttp.ClientError as e:
-        return {"error": f"Error posting data to {request.base_url}: {e}"}
-
-
 async def create_clusters(session: aiohttp.ClientSession, 
                                  base_url: str, 
                                  cluster: dict, 
@@ -152,6 +81,7 @@ async def create_topics(cluster_id: str,
         ))
     return topic_post_requests
 
+
 async def process_clusters(cluster_configs: dict, 
                            session: aiohttp.ClientSession,
                            base_url: str) -> dict:
@@ -184,6 +114,7 @@ async def process_clusters(cluster_configs: dict,
             logging.error(e)
 
     return cluster_info
+
 
 async def create_connectors(cluster_id: str, 
                         connectors: list[str], 
@@ -260,7 +191,7 @@ async def process_cluster_connectors(cluster_configs: dict,
                 logging.info(f'connector: {connector}, result: {result}')
         
 async def main():
-    configs = load_config()
+    configs = load_config('infra/kaka_cluster_config.yaml')
     base_url = configs['uri']
     
     topic_configs = configs['topic_configs']
