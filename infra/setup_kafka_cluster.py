@@ -4,6 +4,7 @@ import os
 import requests
 import sys
 import logging
+import time
 import yaml
 
 # Add the parent directory (app) to sys.path
@@ -26,7 +27,7 @@ env_data = os.path.expandvars(yaml_data)
 # Parse YAML data
 parsed_yaml = yaml.safe_load(env_data)
 
-kafka_api_config = parsed_yaml['kafka-api']
+kafka_api_config = parsed_yaml['kafka_api']
 kafka_api_url = kafka_api_config['uri']
 
 kafka_clusters = kafka_api_config['clusters']
@@ -117,36 +118,44 @@ def create_kafka_connector(auth: tuple, data: dict) -> str:
 def get_kafka_connector(auth: tuple):
     pass
 
+def validate_cluster(cluster: dict):
+    cluster_api_key = cluster['api_key']
+    cluster_api_email = cluster['email']
+    cluster = cluster['cluster']
+    if cluster_api_key == None or cluster_api_key == "":
+        raise ClientException("ApiKey is required to access the kafka api.")
+    if cluster_api_email == None or cluster_api_email == "":
+        raise ClientException("Email is required to access the kafka api.")
+
+def getAuthKey(cluster: dict) -> tuple:
+    cluster_api_key = cluster['api_key']
+    cluster_api_email = cluster['email']
+    return (cluster_api_email, cluster_api_key)
+
 def main():
     if kafka_clusters is not None:
-        logging.warn("Kafka cluster information is not available")
+        logging.error("Kafka cluster information is not available")
         return
     
     try:
         for kafka_cluster in kafka_clusters:
-            cluster_api_key = kafka_cluster['api-key']
-            cluster_api_email = kafka_cluster['email']
-            cluster = kafka_cluster['cluster']
-            if cluster_api_key == None or cluster_api_key == "":
-                raise ClientException("ApiKey is required to access the kafka api.")
-            if cluster_api_email == None or cluster_api_email == "":
-                raise ClientException("Email is required to access the kafka api.")
+            validate_cluster(kafka_cluster)
             
-            auth = (cluster_api_email, cluster_api_key)
+            auth = getAuthKey(cluster=kafka_cluster)
             cluster_info = get_cluster_info(auth)
             logging.info(f"current cluster: {cluster_info}")
             
             # Create new cluster if it does not exists
             if len(cluster_info) == 0:
-                cluster_id = create_kafka_cluster(auth=auth, data=cluster)
+                cluster_id = create_kafka_cluster(auth=auth, data=kafka_cluster['cluster'])
                 logging.info(f"cluster_id: {cluster_id}")
-                # create_kafka_topic(auth=auth, 
-                #                    cluster_id=cluster_id, 
-                #                    topic_name="newyeti.source.teams.v1")
-                # create_kafka_connector(auth=auth, cluster_id=cluster_id)
     
     except ClientException as e:
         logging.error(e)  
     
 if __name__ == "__main__":
+    start = time.time()
     main()
+    end = time.time()
+    
+    logging.info(f"Total time taken {end-start} seconds.")

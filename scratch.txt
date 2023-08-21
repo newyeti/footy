@@ -81,6 +81,8 @@ python3 app/entrypoints/cmd/main.py -service fixture_lineups  -loc "data/raw/pl/
 python3 app/entrypoints/cmd/main.py -service fixture_player_stats  -loc "data/raw/pl/2022" -season 2022
 python3 app/entrypoints/cmd/main.py -service top_scorers  -loc "data/raw/pl/2022" -season 2022
 
+export NEWYETI_PROD_CLUSTER0_KEY=436371f4-910c-4f5e-ae31-3645b15a5644
+export NEWYETI_PROD_CLUSTER0_EMAIL=sachindra.maharjan4@gmail.com
 export NEWYETI_PROD_CLUSTER1_KEY=da41d026-d06a-4fe5-be86-26e2c544d9f3
 export NEWYETI_PROD_CLUSTER1_EMAIL=sachindra.maharjan4@gmail.com
 export NEWYETI_PROD_CLUSTER2_KEY=e83667b8-8e28-45ae-9726-3a08272d0005
