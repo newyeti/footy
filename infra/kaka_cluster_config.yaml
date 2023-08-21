@@ -2,7 +2,7 @@
 ---
 kafka_api:
   uri: "https://api.upstash.com/v2/kafka"
-  clusters:
+  cluster_configs:
   - api_key: ${NEWYETI_PROD_CLUSTER0_KEY}
     email: ${NEWYETI_PROD_CLUSTER0_EMAIL}
     cluster: 
@@ -12,9 +12,9 @@ kafka_api:
     topics:
     - teams
     - fixtures
-    connnectors:
-      mongo:
-      - teams
+    - fixture_events
+    connectors:
+    - mongo.teams
 
   - api_key: ${NEWYETI_PROD_CLUSTER1_KEY}
     email: ${NEWYETI_PROD_CLUSTER1_EMAIL}
@@ -25,9 +25,8 @@ kafka_api:
     topics:
     - teams
     - fixtures
-    connnectors:
-      mongo:
-      - teams
+    connectors:
+    - mongo.teams
 
   - api_key: ${NEWYETI_PROD_CLUSTER2_KEY}
     email: ${NEWYETI_PROD_CLUSTER2_EMAIL}
@@ -39,7 +38,7 @@ kafka_api:
     - teams
     - fixtures
     connectors:
-    - newyeti.mongo.football.teams.sink
+    - mongo.teams
 
   - api_key: ${NEWYETI_PROD_CLUSTER3_KEY}
     email: ${NEWYETI_PROD_CLUSTER3_EMAIL}
@@ -51,7 +50,7 @@ kafka_api:
     - teams
     - fixtures
     connectors:
-    - newyeti.mongo.football.teams.sink
+    - mongo.teams
 
   topic_configs:
     teams:
@@ -69,22 +68,37 @@ kafka_api:
       retention_size: 268435456
       max_message_size: 1048576
       cleanup_policy: delete
+    
+    fixture_events:
+      name: newyeti.source.fixture_events.v1
+      partitions: 2
+      retention_time: 604800000
+      retention_size: 268435456
+      max_message_size: 1048576
+      cleanup_policy: delete
 
   connector_configs:
-    mongo:
-      teams:
+    mongo.teams:
         name: newyeti.mongo.football.teams.sink
         properties:
           collection: teams
-          connection.uri: mongodb+srv://{MONGO_USERNAME}:{MONGO_PASSWORD@{MONGO_HOSTNAME}
+          connection.uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}
           connector.class: com.mongodb.kafka.connect.MongoSinkConnector
           database: football
           topics: newyeti.source.teams.v1
-      fixtures:
-        name: newyeti.mongo.football.fixtures.sink
-        properties:
-          collection: fixtures
-          connection.uri: mongodb+srv://{MONGO_USERNAME}:{MONGO_PASSWORD@{MONGO_HOSTNAME}
-          connector.class: com.mongodb.kafka.connect.MongoSinkConnector
-          database: football
-          topics: newyeti.source.fixtures.v1
+    mongo.fixtures:
+      name: newyeti.mongo.football.fixtures.sink
+      properties:
+        collection: fixtures
+        connection.uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}
+        connector.class: com.mongodb.kafka.connect.MongoSinkConnector
+        database: football
+        topics: newyeti.source.fixtures.v1
+    mongo.fixture_events:
+      name: newyeti.mongo.football.fixtures.sink
+      properties:
+        collection: fixture_events
+        connection.uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}
+        connector.class: com.mongodb.kafka.connect.MongoSinkConnector
+        database: football
+        topics: newyeti.source.fixture_events.v1

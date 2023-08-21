@@ -30,7 +30,7 @@ parsed_yaml = yaml.safe_load(env_data)
 kafka_api_config = parsed_yaml['kafka_api']
 kafka_api_url = kafka_api_config['uri']
 
-kafka_clusters = kafka_api_config['clusters']
+kafka_clusters = kafka_api_config['cluster_configs']
 kafka_topic_configs = kafka_api_config['topic_configs']
 kafka_connector_configs = kafka_api_config['connector_configs']
 
