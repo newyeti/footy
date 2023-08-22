@@ -51,7 +51,9 @@ async def main():
                 logging.info(f"Cluster {cluster_id} added for deletion")
         
         logging.info(f"Cluster delete started...")
+        
         await asyncio.gather(*delete_cluster_tasks)
+        
         logging.info(f"Cluster delete completed")
 
 if __name__ == "__main__":

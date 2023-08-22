@@ -1,6 +1,7 @@
 
 import json
 import os
+import ssl
 import sys
 import logging
 import time
@@ -22,43 +23,60 @@ from infra.kafka_cluster_utils import (
     post_request
 )
 
-logging.basicConfig(level=logging.INFO, 
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('infra')
+  
+
+async def get_clusters(cluster_configs: dict, session: aiohttp.ClientSession, base_url: str) -> dict[str, str]:
+    get_cluster_tasks = []
+    available_clusters = {}
     
-async def create_clusters(session: aiohttp.ClientSession, 
-                                 base_url: str, 
-                                 cluster: dict, 
-                                 cluster_requests: [Request]):
-    username = cluster['email']
-    password = cluster['api_key']
+    for cluster in cluster_configs:
+        validate_cluster(cluster=cluster)
+        username = cluster['email']
+        password = cluster['api_key']
+        
+        get_cluster_tasks.append(
+            asyncio.create_task(session.get(f"{base_url}/clusters", auth=aiohttp.BasicAuth(login=username, password=password, encoding="utf-8"), ssl=False))
+        )
+
+    results = await asyncio.gather(*get_cluster_tasks)
     
-    try:
-        response_data = await get_request(session=session, 
-                                        url=f"{base_url}/clusters", 
-                                        username=username, 
-                                        password=password)
-        if response_data is not None and len(response_data) > 0:
-            cluster_data = response_data[0]
-            cluster_id = cluster_data['cluster_id']
-            cluster_name = cluster_data['name']
-            logging.info(f"Cluster {cluster_id} already exists with cluster id : {cluster_name}")
-            return {
-                "cluster_name": cluster_name,
-                "cluster_id": cluster_id
-            }
-        else:
+    for cluster, result in zip(cluster_configs, results):
+        cluster_name = cluster['cluster']['name']
+        response_data = await result.json()
+        cluster_id = ""
+        
+        if len(response_data) > 0:
+            cluster_id = response_data[0]['cluster_id']
+        
+        available_clusters[cluster_name] = cluster_id
+    
+    return available_clusters
+
+
+async def create_cluster_requests(cluster_configs: dict, available_clusters: dict, base_url: str) -> list[Request]:
+    cluster_requests: [Request] = []
+            
+    for cluster in cluster_configs:
+        cluster_name = cluster['cluster']['name']
+        
+        if cluster_name in available_clusters and available_clusters[cluster_name] == "":
+            username = cluster['email']
+            password = cluster['api_key']
+            
             cluster_requests.append(
-                Request(id=cluster['cluster']['name'],
+                Request(id=cluster_name,
                         method = "post",
                         url = f"{base_url}/cluster", 
                         data = json.dumps(cluster['cluster']),
                         username=username,
                         password=password))
-    except aiohttp.ClientError as e:
-        logging.error(e)
+    
+    return cluster_requests
 
-async def create_topics(cluster_id: str, 
+
+async def create_topic_requests(cluster_id: str, 
                         topics: list[str], 
                         topic_configs: dict, 
                         base_url: str,
@@ -82,41 +100,7 @@ async def create_topics(cluster_id: str,
     return topic_post_requests
 
 
-async def process_clusters(cluster_configs: dict, 
-                           session: aiohttp.ClientSession,
-                           base_url: str) -> dict:
-    cluster_requests: [Request] = []
-    cluster_info = {}
-    try:
-        for cluster in cluster_configs:
-            validate_cluster(cluster=cluster)
-            
-            cluster_map = await create_clusters(session=session, 
-                                    base_url=base_url,
-                                    cluster=cluster,
-                                    cluster_requests=cluster_requests)
-            if cluster_map is not None:
-                cluster_info[cluster_map['cluster_name']] = cluster_map['cluster_id']
-
-        if len(cluster_requests) > 0:
-            logging.info("Creating clusters started")
-            
-            # Asynchronous API requests
-            tasks = [post_request(session=session, request=request) for request in cluster_requests]
-            results = await asyncio.gather(*tasks)
-        
-            for request, result in zip(cluster_requests, results):
-                cluster_info[request.id] = result['cluster_id']
-        
-            logging.info("Creating clusters completed")
-            
-    except ClientException as e:
-            logging.error(e)
-
-    return cluster_info
-
-
-async def create_connectors(cluster_id: str, 
+async def create_connector_requests(cluster_id: str, 
                         connectors: list[str], 
                         connector_configs: dict, 
                         base_url: str,
@@ -140,30 +124,65 @@ async def create_connectors(cluster_id: str,
         
     return connector_post_requests
 
-async def process_cluster_topics(cluster_configs: dict,
-                                 topic_configs: dict,
-                                 available_clusters: dict,
-                                 base_url: str,
-                                 session: aiohttp.ClientSession) -> dict:
-    
-    for cluster in cluster_configs:
-        valid_topics = [topic for topic in cluster['topics'] if topic in topic_configs ]
-        cluster_name = cluster['cluster']['name']
-        username = cluster['email']
-        password = cluster['api_key']
-        
-        if cluster_name in available_clusters:
-            topic_post_requests = await create_topics(cluster_id=available_clusters[cluster_name],
-                                                topics=valid_topics, 
-                                                topic_configs=topic_configs,
-                                                base_url=base_url,
-                                                username=username,
-                                                password=password)
-            tasks = [post_request(session=session, request=request) for request in topic_post_requests]
-            results = await asyncio.gather(*tasks)
+
+async def process_cluster(cluster_configs: dict, 
+                           session: aiohttp.ClientSession,
+                           base_url: str) -> dict:
+    try:
+        logging.info("Creating clusters started")
+        current_clusters = await get_clusters(cluster_configs=cluster_configs, session=session, base_url=base_url)
+        cluster_requests = await create_cluster_requests(cluster_configs=cluster_configs, available_clusters=current_clusters, base_url= base_url)
             
-            for topic, result in zip(valid_topics, results):
-                logging.info(f'topic: {topic}, result: {result}')
+        if len(cluster_requests) > 0:
+            # Asynchronous API requests
+            tasks = [post_request(session=session, request=request) for request in cluster_requests]
+            results = await asyncio.gather(*tasks)
+        
+            for cluster_requests , result in zip(cluster_requests, results):
+                current_clusters[cluster_requests.id] = result['cluster_id']
+                logging.info(f'cluster: {cluster_requests.id}, result: {result}')
+        
+        logging.info(f"Available clusters: {current_clusters}")
+        logging.info("Creating clusters completed")
+        return current_clusters
+    
+    except ClientException as e:
+        logging.error(e)
+    except aiohttp.ClientError as e:
+        logging.error(e)
+
+
+async def process_cluster_topics(cluster_configs: dict,
+                                    topic_configs: dict,
+                                    available_clusters: dict,
+                                    base_url: str,
+                                    session: aiohttp.ClientSession) -> dict: 
+    try:
+        logging.info("Creating topics started")
+        for cluster in cluster_configs:
+            valid_topics = [topic for topic in cluster['topics'] if topic in topic_configs ]
+            cluster_name = cluster['cluster']['name']
+            username = cluster['email']
+            password = cluster['api_key']
+            
+            if cluster_name in available_clusters:
+                topic_post_requests = await create_topic_requests(cluster_id=available_clusters[cluster_name],
+                                                            topics=valid_topics, 
+                                                            topic_configs=topic_configs,
+                                                            base_url=base_url,
+                                                            username=username,
+                                                            password=password)
+                tasks = [post_request(session=session, request=request) for request in topic_post_requests]
+                results = await asyncio.gather(*tasks)
+                
+                for topic, result in zip(valid_topics, results):
+                    logging.info(f'topic: {topic}, result: {result}')
+                    
+        logging.info("Creating topics completed")
+    except aiohttp.ClientError as e:
+        logging.error(e)
+    
+
 
 async def process_cluster_connectors(cluster_configs: dict,
                                         connector_configs: dict,
@@ -171,25 +190,34 @@ async def process_cluster_connectors(cluster_configs: dict,
                                         base_url: str,
                                         session: aiohttp.ClientSession) -> dict:
     
-    for cluster in cluster_configs:
-        valid_connectors = [connector for connector in cluster['connectors'] if connector in connector_configs ]
-        cluster_name = cluster['cluster']['name']
-        username = cluster['email']
-        password = cluster['api_key']
+    try:
+        logging.info("Creating connectors started")
         
-        if cluster_name in available_clusters:
-            connectors_post_requests = await create_connectors(cluster_id=available_clusters[cluster_name],
-                                                                connectors=valid_connectors, 
-                                                                connector_configs=connector_configs,
-                                                                base_url=base_url,
-                                                                username=username,
-                                                                password=password)
-            tasks = [post_request(session=session, request=request) for request in connectors_post_requests]
-            results = await asyncio.gather(*tasks)
+        for cluster in cluster_configs:
+            valid_connectors = [connector for connector in cluster['connectors'] if connector in connector_configs ]
+            cluster_name = cluster['cluster']['name']
+            username = cluster['email']
+            password = cluster['api_key']
             
-            for connector, result in zip(valid_connectors, results):
-                logging.info(f'connector: {connector}, result: {result}')
+            if cluster_name in available_clusters:
+                connectors_post_requests = await create_connector_requests(cluster_id=available_clusters[cluster_name],
+                                                                    connectors=valid_connectors, 
+                                                                    connector_configs=connector_configs,
+                                                                    base_url=base_url,
+                                                                    username=username,
+                                                                    password=password)
+                tasks = [post_request(session=session, request=request) for request in connectors_post_requests]
+                results = await asyncio.gather(*tasks)
+                
+                for connector, result in zip(valid_connectors, results):
+                    logging.info(f'connector: {connector}, result: {result}')
+                
+        logging.info("Creating connectors completed")
         
+    except aiohttp.ClientError as e:
+        logging.error(e)
+
+
 async def main():
     configs = load_config('infra/kaka_cluster_config.yaml')
     base_url = configs['uri']
@@ -198,11 +226,10 @@ async def main():
     connector_configs = configs['connector_configs']
     
     async with aiohttp.ClientSession() as session:
-        available_clusters = await process_clusters(cluster_configs=configs['cluster_configs'], 
+        available_clusters = await process_cluster(cluster_configs=configs['cluster_configs'], 
                         session=session,
                         base_url=base_url)
-        logging.info(f"Available clusters: {available_clusters}")
-        
+ 
         await process_cluster_topics(cluster_configs=configs['cluster_configs'],
                                      topic_configs=topic_configs,
                                      available_clusters=available_clusters,
