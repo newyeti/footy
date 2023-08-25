@@ -1,5 +1,4 @@
-from pydantic import BaseModel, Field
-from infra.kafka_cluster_utils import Request
+from pydantic import BaseModel
 
 class KafkaCluster(BaseModel):
     name: str

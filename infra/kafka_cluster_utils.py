@@ -1,19 +1,10 @@
 import aiohttp
 import asyncio
+import logging
 import os
 from typing import Awaitable, Any
 import yaml
-from app.core.exceptions.client_exception import ClientException
-from dataclasses import dataclass
 
-@dataclass
-class Request:
-    id: str
-    method: str
-    url: str
-    data: str
-    username: str
-    password: str
 
 async def run_sequence(*functions: Awaitable[Any]) -> None:
     for function in functions:
@@ -22,6 +13,11 @@ async def run_sequence(*functions: Awaitable[Any]) -> None:
 async def run_parallel(*functions: Awaitable[Any]) -> None:
     await asyncio.gather(*functions)
 
+def get_auth(username: str, password: str) -> aiohttp.BasicAuth:
+    return aiohttp.BasicAuth(login=username, 
+                                    password=password, 
+                                    encoding="utf-8")
+    
 def load_config(file: str) -> dict[str, dict]:
     # Load YAML data from a file
     with open(file, 'r') as yaml_file:
@@ -32,17 +28,7 @@ def load_config(file: str) -> dict[str, dict]:
     # Parse YAML data
     return yaml.safe_load(env_data)
 
-def validate_cluster(cluster: dict):
-    cluster_api_key = cluster['api_key']
-    cluster_api_email = cluster['email']
-    if cluster_api_key == None or cluster_api_key == "":
-        raise ClientException("ApiKey is required to access the kafka api.")
-    if cluster_api_email == None or cluster_api_email == "":
-        raise ClientException("Email is required to access the kafka api.")
-    
-async def get_request(session: aiohttp.ClientSession, url: str, username: str, password: str) -> Any:
-    auth = aiohttp.BasicAuth(login=username, password=password, encoding="utf-8")
-    
+async def get_request(session: aiohttp.ClientSession, url: str, auth: aiohttp.BasicAuth) -> Any:
     try:
         async with session.get(url=url, auth=auth, ssl=False) as response:
             response_content_type = response.headers.get('Content-Type')
@@ -54,16 +40,18 @@ async def get_request(session: aiohttp.ClientSession, url: str, username: str, p
     except aiohttp.ClientError as e:
         return {"error": f"Error getting data from {url}: {e}"}
     
-async def post_request(session: aiohttp.ClientSession, request: Request):
+async def post_request(session: aiohttp.ClientSession, 
+                       url: str, 
+                       auth: aiohttp.BasicAuth, 
+                       data: dict,
+                       logging: logging):
     headers = {
         'Content-Type': 'application/json'
     }
     
-    auth = aiohttp.BasicAuth(login=request.username, password=request.password, encoding="utf-8")
-    
     try:
-        async with session.post(url=request.url,
-                                data=request.data,
+        async with session.post(url=url,
+                                data=data,
                                 headers=headers,
                                 auth=auth, 
                                 ssl=False) as response:
@@ -73,8 +61,8 @@ async def post_request(session: aiohttp.ClientSession, request: Request):
                 response_data = await response.json()
             else:
                 response_data = await response.text()
-                
+            logging.info(f"status={response.status}, message={response_data}")
             return response_data
         
     except aiohttp.ClientError as e:
-        return {"error": f"Error posting data to {request.base_url}: {e}"}
+        return {"error": f"Error posting data to {url}: {e}"}

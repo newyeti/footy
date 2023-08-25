@@ -6,7 +6,6 @@ import copy
 import json
 import logging
 import os
-import ssl
 import sys
 import time
 from typing import Any
@@ -16,16 +15,11 @@ current_directory =  os.path.abspath(os.path.dirname(__file__))
 parent_directory = os.path.abspath(os.path.join(current_directory, ".."))
 sys.path.insert(0, parent_directory)
 
-from infra.kafka_cluster_utils import load_config
+from infra.kafka_cluster_utils import (load_config, get_request, post_request, get_auth)
 from infra.upstash_stack import (Kafka, Project, Redis, Stack)
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('infra')
-
-def get_auth(username: str, password: str) -> aiohttp.BasicAuth:
-    return aiohttp.BasicAuth(login=username, 
-                                    password=password, 
-                                    encoding="utf-8")
 
 def process_kafka_cluster(session: aiohttp.ClientSession,
                             base_url: str, 
@@ -40,9 +34,12 @@ def process_kafka_cluster(session: aiohttp.ClientSession,
     cluster_tasks = []
    
     if existing_cluster[kafka_cluster.name] == '':
-        cluster_tasks.append(asyncio.create_task(session.post(url=cluster_url, auth=auth,
-                                                            data=json.dumps(kafka_cluster.properties),
-                                                            ssl=False)))
+        cluster_tasks.append(asyncio.create_task(
+            post_request(session=session,
+                         url=cluster_url, 
+                         auth=auth, 
+                         data=json.dumps(kafka_cluster.properties),
+                         logging=logging)))
     
     return cluster_tasks
     
@@ -66,8 +63,11 @@ def process_kafka_topic_and_connector(session: aiohttp.ClientSession,
         payload = json.dumps(topic_configuration[topic])
         
         topic_tasks.append(asyncio.create_task(
-            session.post(url=f"{base_url}{kafka.endpoint}/topic", auth=auth, ssl=False,
-                            data=payload)))
+            post_request(session=session, 
+                         url=f"{base_url}{kafka.endpoint}/topic", 
+                         auth=auth, 
+                         data=payload,
+                         logging=logging)))
     
     for connector in kafka_cluster.connectors:
         connector_config = copy.deepcopy(connector_configuration[connector])
@@ -82,11 +82,13 @@ def process_kafka_topic_and_connector(session: aiohttp.ClientSession,
             properties['keyfile'] = decoded_key_file
         
         payload = json.dumps(connector_config)
-        
-        print(payload)
         connector_tasks.append(asyncio.create_task(
-        session.post(url=f"{base_url}{kafka.endpoint}/connector", auth=auth, ssl=False,
-                        data=payload)))
+            post_request(session=session, 
+                         url=f"{base_url}{kafka.endpoint}/connector", 
+                         auth=auth, 
+                         data=payload,
+                         logging=logging)))
+    
     return (topic_tasks, connector_tasks)
 
 def process_redis_database(session: aiohttp.ClientSession, 
@@ -101,7 +103,11 @@ def process_redis_database(session: aiohttp.ClientSession,
     
     if existing_database[redis.database.name] == "":
         task.append(asyncio.create_task(
-            session.post(url=url, auth=auth, ssl=False, data=json.dumps(redis.database.properties))))
+            post_request(session=session,
+                         url=url, 
+                         auth=auth, 
+                         data=json.dumps(redis.database.properties),
+                         logging=logging)))
     return task
         
 async def find_existing_stack(session: aiohttp.ClientSession, base_url: str, projects: list[Project]) -> dict:
@@ -113,29 +119,26 @@ async def find_existing_stack(session: aiohttp.ClientSession, base_url: str, pro
     for project in projects:
         auth = get_auth(username=project.email, password=project.api_key)
         get_cluster_tasks.append(asyncio.create_task(
-                session.get(f"{base_url}{project.kafka.endpoint}/clusters", auth=auth, ssl=False))
+            get_request(session=session, url=f"{base_url}{project.kafka.endpoint}/clusters", auth=auth))
         )
         
         get_database_tasks.append(asyncio.create_task(
-            session.get(f"{base_url}{project.redis.endpoint}/databases", auth=auth, ssl=False))
+            get_request(session=session, url=f"{base_url}{project.redis.endpoint}/databases", auth=auth))
         )
-        
         
     cluster_results = await asyncio.gather(*get_cluster_tasks)
     database_results = await asyncio.gather(*get_database_tasks)
 
     for project, cluster_result, database_result in zip(projects, cluster_results, database_results):
-        cluster_response_data = await cluster_result.json()
         cluster_id = ""
         database_id = ""
         
-        if len(cluster_response_data) > 0:
-            cluster_id = cluster_response_data[0]['cluster_id']
+        if len(cluster_result) > 0:
+            cluster_id = cluster_result[0]['cluster_id']
         available_clusters[project.kafka.cluster.name] = cluster_id
         
-        database_response_data = await database_result.json()
-        if len(database_response_data) > 0:
-            database_id = database_response_data[0]['database_id']
+        if len(database_result) > 0:
+            database_id = database_result[0]['database_id']
         available_databases[project.redis.database.name] = database_id
     
     return (available_clusters, available_databases)
@@ -150,10 +153,9 @@ async def create_kafka_clusters(tasks: list, availabe_clusters: dict) -> None:
             logging.info("Kafka clusters are already available.")
         else:
             for result in cluster_task_results:
-                response_data = await result.json()
-                logging.info(response_data)
-                cluster_id = response_data['cluster_id']
-                cluster_name = response_data['name']
+                logging.info(result)
+                cluster_id = result['cluster_id']
+                cluster_name = result['name']
                 availabe_clusters[cluster_name] = cluster_id
         logging.info("Creating Kafka Clusters - completed")
         logging.info("---------------------------------------")
@@ -176,8 +178,7 @@ async def create_kafka_topics(tasks: list):
         logging.info("---------------------------------------")
         logging.info("Creating Kafka Topics - started")
         
-        responses = await asyncio.gather(*tasks)
-        await process_response(responses=responses)
+        await asyncio.gather(*tasks)
         
         logging.info("Creating Kafka Topics - completed")
         logging.info("---------------------------------------")
@@ -190,8 +191,7 @@ async def create_kafka_connectors(tasks: list):
         logging.info("---------------------------------------")
         logging.info("Creating Kafka Connectors - started")
         
-        responses = await asyncio.gather(*tasks)
-        await process_response(responses=responses)
+        await asyncio.gather(*tasks)
         
         logging.info("Creating Kafka Connectors - completed")
         logging.info("---------------------------------------")
@@ -219,7 +219,7 @@ async def create_redis_databases(tasks: list, availabe_databases: dict):
         logging.error(e)
 
 async def main():
-    parsed_yaml = load_config('infra/upstash_stack_setup.yaml')
+    parsed_yaml = load_config('infra/upstash_stack.yaml')
     configuration = parsed_yaml['stack']
     topic_configuration = configuration['topic_configuration']
     connector_configuration = configuration['connector_configuration'] 
