@@ -30,8 +30,7 @@ def load_config(file: str) -> dict[str, dict]:
     env_data = os.path.expandvars(yaml_data)
     
     # Parse YAML data
-    parsed_yaml = yaml.safe_load(env_data)
-    return parsed_yaml['kafka_api']
+    return yaml.safe_load(env_data)
 
 def validate_cluster(cluster: dict):
     cluster_api_key = cluster['api_key']

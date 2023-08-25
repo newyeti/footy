@@ -1,101 +1,46 @@
-
 ---
-kafka_api:
-  uri: "https://api.upstash.com/v2/kafka"
-  cluster_configs:
-  - api_key: ${NEWYETI_PROD_CLUSTER0_KEY}
-    email: ${NEWYETI_PROD_CLUSTER0_EMAIL}
-    cluster: 
-      name: newyeti-prod-cluster-0
-      region: us-east-1
-      multizone: true
-    topics:
-    - teams
-    - fixtures
-    - fixture_events
-    - fixture_lineups
-    - fixture_player_stats
-    - top_scorers
-    connectors:
-    - mongo.sink.teams
-    - mongo.sink.fixtures
-    - mongo.sink.fixture_events
-    - mongo.sink.fixture_lineups
-    - mongo.sink.fixture_player_stats
-    - mongo.sink.top_scorers
-    - bq.nopart.sink
-    - bq.part.sink
-
-  - api_key: ${NEWYETI_PROD_CLUSTER1_KEY}
-    email: ${NEWYETI_PROD_CLUSTER1_EMAIL}
-    cluster: 
-      name: newyeti-prod-cluster-1
-      region: us-east-1
-      multizone: true
-    topics:
-    - teams
-    - fixtures
-    - fixture_events
-    - fixture_lineups
-    - fixture_player_stats
-    - top_scorers
-    connectors:
-    - mongo.sink.teams
-    - mongo.sink.fixtures
-    - mongo.sink.fixture_events
-    - mongo.sink.fixture_lineups
-    - mongo.sink.fixture_player_stats
-    - mongo.sink.top_scorers
-    - bq.nopart.sink
-    - bq.part.sink
-
-  - api_key: ${NEWYETI_PROD_CLUSTER2_KEY}
-    email: ${NEWYETI_PROD_CLUSTER2_EMAIL}
-    cluster: 
-      name: newyeti-prod-cluster-2
-      region: us-east-1
-      multizone: true
-    topics:
-    - teams
-    - fixtures
-    - fixture_events
-    - fixture_lineups
-    - fixture_player_stats
-    - top_scorers
-    connectors:
-    - mongo.sink.teams
-    - mongo.sink.fixtures
-    - mongo.sink.fixture_events
-    - mongo.sink.fixture_lineups
-    - mongo.sink.fixture_player_stats
-    - mongo.sink.top_scorers
-    - bq.nopart.sink
-    - bq.part.sink
-
-  - api_key: ${NEWYETI_PROD_CLUSTER3_KEY}
-    email: ${NEWYETI_PROD_CLUSTER3_EMAIL}
-    cluster: 
-      name: newyeti-prod-cluster-3
-      region: us-east-1
-      multizone: true
-    topics:
-    - teams
-    - fixtures
-    - fixture_events
-    - fixture_lineups
-    - fixture_player_stats
-    - top_scorers
-    connectors:
-    - mongo.sink.teams
-    - mongo.sink.fixtures
-    - mongo.sink.fixture_events
-    - mongo.sink.fixture_lineups
-    - mongo.sink.fixture_player_stats
-    - mongo.sink.top_scorers
-    - bq.nopart.sink
-    - bq.part.sink
-
-  topic_configs:
+stack:
+  base_url: https://api.upstash.com/v2
+  projects:
+    - name: newyeti-1
+      email: ${NEWYETI_PROD_CLUSTER1_EMAIL}
+      api_key: ${NEWYETI_PROD_CLUSTER1_KEY}
+      kafka:
+        endpoint: /kafka
+        cluster:
+          name: newyeti-cluster-1
+          properties:
+            name: newyeti-cluster-1
+            region: us-east-1
+            multizone: true
+          topics:
+          - teams
+          - fixtures
+          - fixture_events
+          - fixture_lineups
+          - fixture_player_stats
+          - top_scorers
+          connectors:
+          - mongo.sink.teams
+          - mongo.sink.fixtures
+          - mongo.sink.fixture_events
+          - mongo.sink.fixture_lineups
+          - mongo.sink.fixture_player_stats
+          - mongo.sink.top_scorers
+          - bq.nopart.sink
+          - bq.part.sink
+      redis:
+        endpoint: /redis
+        database: 
+          name: newyeti-db-1
+          properties:
+            name: newyeti-db-1
+            region: global
+            primary_region: us-east-1
+            read_regions:
+            - us-west-1
+            tls: true
+  topic_configuration:
     teams:
       name: newyeti.source.teams.v1
       partitions: 1
@@ -138,8 +83,7 @@ kafka_api:
       retention_size: 268435456
       max_message_size: 1048576
       cleanup_policy: delete
-
-  connector_configs:
+  connector_configuration:
     mongo.sink.teams:
         name: newyeti.mongo.football.teams.sink
         properties:
@@ -220,4 +164,3 @@ kafka_api:
         topics: newyeti.source.fixtures.v1,newyeti.source.fixture-events.v1,newyeti.source.fixture-player-stats.v1,newyeti.source.fixture-lineups.v1
         value.converter: org.apache.kafka.connect.json.JsonConverter
         value.converter.schemas.enable: false
-

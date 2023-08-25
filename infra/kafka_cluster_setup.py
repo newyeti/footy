@@ -7,7 +7,8 @@ import logging
 import time
 import asyncio
 import aiohttp
-from typing import Any
+import base64
+import copy
 
 # Add the parent directory (app) to sys.path
 current_directory =  os.path.abspath(os.path.dirname(__file__))
@@ -110,9 +111,21 @@ async def create_connector_requests(cluster_id: str,
     
     for connector in connectors:
         data = connector_configs[connector]
-        data['cluster_id'] = cluster_id
-        request_data = json.dumps(data)
-    
+        
+        # Copy connection configuration and replace cluster properties
+        cluster_connector_data = copy.deepcopy(data)
+        cluster_connector_data['cluster_id'] = cluster_id
+        properties = cluster_connector_data['properties']
+        
+        # Decode keyfile 
+        if "keyfile" in properties.keys():
+            encoded_key_file = properties['keyfile']
+            decoded_bytes = base64.b64decode(encoded_key_file)
+            decoded_key_file = decoded_bytes.decode('utf-8')
+            properties['keyfile'] = decoded_key_file
+        
+        request_data = json.dumps(cluster_connector_data)
+        
         connector_post_requests.append(Request(
             id=connector,
             url=f"{base_url}/connector", 
@@ -219,7 +232,8 @@ async def process_cluster_connectors(cluster_configs: dict,
 
 
 async def main():
-    configs = load_config('infra/kaka_cluster_config.yaml')
+    parsed_yaml = load_config('infra/kaka_cluster_config.yaml')
+    configs = parsed_yaml['kafka_api']
     base_url = configs['uri']
     
     topic_configs = configs['topic_configs']
