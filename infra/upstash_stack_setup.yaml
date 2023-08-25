@@ -40,6 +40,82 @@ stack:
             read_regions:
             - us-west-1
             tls: true
+    - name: newyeti-1
+      email: ${NEWYETI_PROD_CLUSTER2_EMAIL}
+      api_key: ${NEWYETI_PROD_CLUSTER2_KEY}
+      kafka:
+        endpoint: /kafka
+        cluster:
+          name: newyeti-cluster-2
+          properties:
+            name: newyeti-cluster-2
+            region: us-east-1
+            multizone: true
+          topics:
+          - teams
+          - fixtures
+          - fixture_events
+          - fixture_lineups
+          - fixture_player_stats
+          - top_scorers
+          connectors:
+          - mongo.sink.teams
+          - mongo.sink.fixtures
+          - mongo.sink.fixture_events
+          - mongo.sink.fixture_lineups
+          - mongo.sink.fixture_player_stats
+          - mongo.sink.top_scorers
+          - bq.nopart.sink
+          - bq.part.sink
+      redis:
+        endpoint: /redis
+        database: 
+          name: newyeti-db-2
+          properties:
+            name: newyeti-db-2
+            region: global
+            primary_region: us-east-1
+            read_regions:
+            - us-west-1
+            tls: true
+    - name: newyeti-1
+      email: ${NEWYETI_PROD_CLUSTER3_EMAIL}
+      api_key: ${NEWYETI_PROD_CLUSTER3_KEY}
+      kafka:
+        endpoint: /kafka
+        cluster:
+          name: newyeti-cluster-3
+          properties:
+            name: newyeti-cluster-3
+            region: us-east-1
+            multizone: true
+          topics:
+          - teams
+          - fixtures
+          - fixture_events
+          - fixture_lineups
+          - fixture_player_stats
+          - top_scorers
+          connectors:
+          - mongo.sink.teams
+          - mongo.sink.fixtures
+          - mongo.sink.fixture_events
+          - mongo.sink.fixture_lineups
+          - mongo.sink.fixture_player_stats
+          - mongo.sink.top_scorers
+          - bq.nopart.sink
+          - bq.part.sink
+      redis:
+        endpoint: /redis
+        database: 
+          name: newyeti-db-3
+          properties:
+            name: newyeti-db-3
+            region: global
+            primary_region: us-east-1
+            read_regions:
+            - us-west-1
+            tls: true
   topic_configuration:
     teams:
       name: newyeti.source.teams.v1

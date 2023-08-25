@@ -29,10 +29,3 @@ class Project(BaseModel):
 class Stack(BaseModel):
     base_url: str
     projects: list[Project]
-
-class Request(BaseModel):
-    request_id: str
-    url: str
-    username: str
-    password: str
-    payload: dict
