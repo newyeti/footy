@@ -116,6 +116,44 @@ stack:
             read_regions:
             - us-west-1
             tls: true
+    - name: newyeti-test
+      email: ${NEWYETI_PROD_CLUSTER0_EMAIL}
+      api_key: ${NEWYETI_PROD_CLUSTER0_KEY}
+      kafka:
+        endpoint: /kafka
+        cluster:
+          name: newyeti-cluster-0
+          properties:
+            name: newyeti-cluster-0
+            region: us-east-1
+            multizone: true
+          topics:
+          - teams
+          - fixtures
+          - fixture_events
+          - fixture_lineups
+          - fixture_player_stats
+          - top_scorers
+          connectors:
+          - test.mongo.sink.teams
+          - test.mongo.sink.fixtures
+          - test.mongo.sink.fixture_events
+          - test.mongo.sink.fixture_lineups
+          - test.mongo.sink.fixture_player_stats
+          - test.mongo.sink.top_scorers
+          - test.bq.nopart.sink
+          - test.bq.part.sink
+      redis:
+        endpoint: /redis
+        database: 
+          name: apiscraper
+          properties:
+            name: apiscraper
+            region: global
+            primary_region: us-east-1
+            read_regions:
+            - us-west-1
+            tls: true
   topic_configuration:
     teams:
       name: newyeti.source.teams.v1
@@ -229,6 +267,87 @@ stack:
         bigQueryPartitionDecorator: false
         connector.class: com.wepay.kafka.connect.bigquery.BigQuerySinkConnector
         defaultDataset: football
+        key.converter: org.apache.kafka.connect.json.JsonConverter
+        key.converter.schemas.enable: false
+        keyfile: ${BIGQUERY_CREDENTIALS}
+        project: newyeti
+        sanitizeTopics: true
+        threadPoolSize: 20
+        timestampPartitionFieldName: event_date
+        topic2TableMap: newyeti.source.fixtures.v1:fixtures,newyeti.source.fixture-events.v1:fixture_events,newyeti.source.fixture-player-stats.v1:fixture_player_stats,newyeti.source.fixture-lineups.v1:fixture_lineups
+        topics: newyeti.source.fixtures.v1,newyeti.source.fixture-events.v1,newyeti.source.fixture-player-stats.v1,newyeti.source.fixture-lineups.v1
+        value.converter: org.apache.kafka.connect.json.JsonConverter
+        value.converter.schemas.enable: false
+    # Test connectors
+    test.mongo.sink.teams:
+      name: newyeti.mongo.football.teams.sink
+      properties:
+        collection: teams
+        connection.uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}
+        connector.class: com.mongodb.kafka.connect.MongoSinkConnector
+        database: test_football
+        topics: newyeti.source.teams.v1
+    test.mongo.sink.fixtures:
+      name: newyeti.mongo.football.fixtures.sink
+      properties:
+        collection: fixtures
+        connection.uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}
+        connector.class: com.mongodb.kafka.connect.MongoSinkConnector
+        database: test_football
+        topics: newyeti.source.fixtures.v1
+    test.mongo.sink.fixture_events:
+      name: newyeti.mongo.football.fixture_events.sink
+      properties:
+        collection: fixture_events
+        connection.uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}
+        connector.class: com.mongodb.kafka.connect.MongoSinkConnector
+        database: test_football
+        topics: newyeti.source.fixture_events.v1
+    test.mongo.sink.fixture_lineups:
+      name: newyeti.mongo.football.fixture_lineups.sink
+      properties:
+        collection: fixture_lineups
+        connection.uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}
+        connector.class: com.mongodb.kafka.connect.MongoSinkConnector
+        database: test_football
+        topics: newyeti.source.fixture_lineups.v1
+    test.mongo.sink.fixture_player_stats:
+      name: newyeti.mongo.football.fixture_player_stats.sink
+      properties:
+        collection: fixture_player_stats
+        connection.uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}
+        connector.class: com.mongodb.kafka.connect.MongoSinkConnector
+        database: test_football
+        topics: newyeti.source.fixture_player_stats.v1
+    test.mongo.sink.top_scorers:
+      name: newyeti.mongo.football.top_scorers.sink
+      properties:
+        collection: top_scorers
+        connection.uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}
+        connector.class: com.mongodb.kafka.connect.MongoSinkConnector
+        database: test_football
+        topics: newyeti.source.top_scorers.v1
+    test.bq.nopart.sink:
+      name: newyeti.bq.nopart.football.sink
+      properties:
+        bigQueryPartitionDecorator: false
+        connector.class: com.wepay.kafka.connect.bigquery.BigQuerySinkConnector
+        defaultDataset: test_football
+        key.converter: org.apache.kafka.connect.json.JsonConverter
+        key.converter.schemas.enable: false
+        keyfile: ${BIGQUERY_CREDENTIALS}
+        project: newyeti
+        sanitizeTopics: true
+        topic2TableMap: newyeti.source.teams.v1:teams,newyeti.source.top-scorers.v1:top_scorers
+        topics: newyeti.source.teams.v1, newyeti.source.top-scorers.v1
+        value.converter: org.apache.kafka.connect.json.JsonConverter
+        value.converter.schemas.enable: false
+    test.bq.part.sink:
+      name: newyeti.bq.part.football.sink
+      properties:
+        bigQueryPartitionDecorator: false
+        connector.class: com.wepay.kafka.connect.bigquery.BigQuerySinkConnector
+        defaultDataset: test_football
         key.converter: org.apache.kafka.connect.json.JsonConverter
         key.converter.schemas.enable: false
         keyfile: ${BIGQUERY_CREDENTIALS}
