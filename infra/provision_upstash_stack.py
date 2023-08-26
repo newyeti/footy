@@ -15,7 +15,7 @@ current_directory =  os.path.abspath(os.path.dirname(__file__))
 parent_directory = os.path.abspath(os.path.join(current_directory, ".."))
 sys.path.insert(0, parent_directory)
 
-from infra.kafka_cluster_utils import (load_config, get_request, post_request, get_auth)
+from infra.helper import (load_config, get_request, post_request, get_auth)
 from infra.upstash_stack import (Kafka, Project, Redis, Stack)
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -163,15 +163,6 @@ async def create_kafka_clusters(tasks: list, availabe_clusters: dict) -> None:
     except aiohttp.ClientError as e:
         logging.error(e)
 
-async def process_response(responses: list):
-    for response in responses:
-        response_content_type = response.content_type
-        if 'json' in response_content_type:
-            response_data = await response.json()
-        else:
-            response_data = await response.text()
-        response_data = await response.json()
-        logging.info(f"status={response.status}, message={response_data}")
 
 async def create_kafka_topics(tasks: list):
     try:

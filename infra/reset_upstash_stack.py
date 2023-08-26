@@ -11,7 +11,7 @@ parent_directory = os.path.abspath(os.path.join(current_directory, ".."))
 sys.path.insert(0, parent_directory)
 
 from infra.upstash_stack import Stack
-from infra.kafka_cluster_utils import(
+from infra.helper import(
     load_config,
     get_request,
     get_auth
