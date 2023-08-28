@@ -15,7 +15,7 @@ def kafka_producer_initializer(instance, kafka_config):
         sasl_plain_password = kafka_config.sasl_plain_password,
         ssl_context = ssl.create_default_context(cafile=certifi.where()),
         value_serializer = lambda v : str(v).encode("utf-8")
-    ) 
+    )
 
 @singleton_with_initializer(kafka_producer_initializer)
 class KafkaProducerSingleton:

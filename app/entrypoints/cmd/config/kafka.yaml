@@ -1,7 +1,7 @@
 kafka:
   bootstrap_servers: 
-    - flying-ghoul-13808-us1-kafka.upstash.io:9092
-  client_id: 'newyeti-telemetry-producer'
+    - unbiased-coral-13008-us1-kafka.upstash.io:9092
+  client_id: 'newyeti-cluster-0'
   sasl_mechanism: SCRAM-SHA-256
   security_protocol: SASL_SSL
   sasl_plain_username: ${oc.env:KAFKA_USERNAME}

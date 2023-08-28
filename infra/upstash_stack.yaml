@@ -338,8 +338,8 @@ stack:
         keyfile: ${BIGQUERY_CREDENTIALS}
         project: newyeti
         sanitizeTopics: true
-        topic2TableMap: newyeti.source.teams.v1:teams,newyeti.source.top-scorers.v1:top_scorers
-        topics: newyeti.source.teams.v1, newyeti.source.top-scorers.v1
+        topic2TableMap: newyeti.source.teams.v1:teams,newyeti.source.top_scorers.v1:top_scorers
+        topics: newyeti.source.teams.v1, newyeti.source.top_scorers.v1
         value.converter: org.apache.kafka.connect.json.JsonConverter
         value.converter.schemas.enable: false
     test.bq.part.sink:
@@ -355,7 +355,7 @@ stack:
         sanitizeTopics: true
         threadPoolSize: 20
         timestampPartitionFieldName: event_date
-        topic2TableMap: newyeti.source.fixtures.v1:fixtures,newyeti.source.fixture-events.v1:fixture_events,newyeti.source.fixture-player-stats.v1:fixture_player_stats,newyeti.source.fixture-lineups.v1:fixture_lineups
-        topics: newyeti.source.fixtures.v1,newyeti.source.fixture-events.v1,newyeti.source.fixture-player-stats.v1,newyeti.source.fixture-lineups.v1
+        topic2TableMap: newyeti.source.fixtures.v1:fixtures,newyeti.source.fixture_events.v1:fixture_events,newyeti.source.fixture_player_stats.v1:fixture_player_stats,newyeti.source.fixture_lineups.v1:fixture_lineups
+        topics: newyeti.source.fixtures.v1,newyeti.source.fixture_events.v1,newyeti.source.fixture_player_stats.v1,newyeti.source.fixture_lineups.v1
         value.converter: org.apache.kafka.connect.json.JsonConverter
         value.converter.schemas.enable: false
