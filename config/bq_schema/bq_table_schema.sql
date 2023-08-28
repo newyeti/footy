@@ -1,5 +1,4 @@
-table_name,ddl
-fixture_player_stats,"CREATE TABLE `newyeti.football.fixture_player_stats`
+CREATE TABLE `newyeti.football.fixture_player_stats`
 (
   season INT64,
   league_id INT64,
@@ -26,8 +25,9 @@ fixture_player_stats,"CREATE TABLE `newyeti.football.fixture_player_stats`
   penalty STRUCT<won INT64, committed INT64, success INT64, saved INT64>
 )
 PARTITION BY TIMESTAMP_TRUNC(event_date, YEAR)
-CLUSTER BY season, league_id, fixture_id, player_id;"
-fixture_lineups,"CREATE TABLE `newyeti.football.fixture_lineups`
+CLUSTER BY season, league_id, fixture_id, player_id;
+
+CREATE TABLE `newyeti.football.fixture_lineups`
 (
   season INT64,
   league_id INT64,
@@ -41,8 +41,9 @@ fixture_lineups,"CREATE TABLE `newyeti.football.fixture_lineups`
   substitutes ARRAY<STRUCT<player_id INT64, player_name STRING>>
 )
 PARTITION BY TIMESTAMP_TRUNC(event_date, MONTH)
-CLUSTER BY season, league_id, fixture_id;"
-top_scorers,"CREATE TABLE `newyeti.football.top_scorers`
+CLUSTER BY season, league_id, fixture_id;
+
+CREATE TABLE `newyeti.football.top_scorers`
 (
   season INT64,
   league_id INT64,
@@ -61,8 +62,9 @@ top_scorers,"CREATE TABLE `newyeti.football.top_scorers`
   cards STRUCT<yellow INT64, second_yellow INT64, red INT64>
 )
 PARTITION BY RANGE_BUCKET(season, GENERATE_ARRAY(2010, 2050, 10))
-CLUSTER BY season, league_id;"
-fixture_events,"CREATE TABLE `newyeti.football.fixture_events`
+CLUSTER BY season, league_id;
+
+CREATE TABLE `newyeti.football.fixture_events`
 (
   season INT64,
   event_date TIMESTAMP,
@@ -81,8 +83,9 @@ fixture_events,"CREATE TABLE `newyeti.football.fixture_events`
   comments STRING
 )
 PARTITION BY TIMESTAMP_TRUNC(event_date, MONTH)
-CLUSTER BY season, league_id, fixture_id;"
-teams,"CREATE TABLE `newyeti.football.teams`
+CLUSTER BY season, league_id, fixture_id;
+
+CREATE TABLE `newyeti.football.teams`
 (
   season INT64,
   league_id INT64,
@@ -98,8 +101,9 @@ teams,"CREATE TABLE `newyeti.football.teams`
   is_national BOOL
 )
 PARTITION BY RANGE_BUCKET(season, GENERATE_ARRAY(2010, 2050, 10))
-CLUSTER BY season, league_id, team_id;"
-fixtures,"CREATE TABLE `newyeti.football.fixtures`
+CLUSTER BY season, league_id, team_id;
+
+CREATE TABLE `newyeti.football.fixtures`
 (
   season INT64,
   league_id INT64,
@@ -119,4 +123,4 @@ fixtures,"CREATE TABLE `newyeti.football.fixtures`
   score STRUCT<half_time STRING, full_time STRING, extra_time STRING, penalty STRING>
 )
 PARTITION BY TIMESTAMP_TRUNC(event_date, YEAR)
-CLUSTER BY season, league_id;"
+CLUSTER BY season, league_id;
