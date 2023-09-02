@@ -4,6 +4,7 @@ import certifi
 import ssl
 from app.core.tools.decorators import singleton_with_initializer
 from app.entrypoints.cmd.config import KafkaConfig
+from app.adapters.services.redis_service_impl import RedisSingleton
 
 def kafka_producer_initializer(instance, kafka_config):
     instance.producer = KafkaProducer(
@@ -18,9 +19,10 @@ def kafka_producer_initializer(instance, kafka_config):
     )
 
 @singleton_with_initializer(kafka_producer_initializer)
-class KafkaProducerSingleton:
-    def __init__(self, kafka_config: KafkaConfig):
+class KafkaSingleton:
+    def __init__(self, kafka_config: KafkaConfig, redis: RedisSingleton):
         self.kafka_config = kafka_config
+        self.redis = redis
         pass
     
     def send(self, topic: str, message: str) -> None:

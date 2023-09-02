@@ -1,11 +1,11 @@
 defaults:
-  - kafka
+  - stack
   - service
   - _self_
   
 app:
   name: Telemetry CLI
-  kafka: ${kafka}
+  stacks: 
+  - ${newyeti_1}
+  - ${newyeti_2}
   service: ${service}
-  
-

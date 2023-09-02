@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from infra.upstash_stack import Stack
 
 class KafkaConfig(BaseModel):
     bootstrap_servers: list[str]
@@ -8,7 +9,14 @@ class KafkaConfig(BaseModel):
     sasl_plain_username: str
     sasl_plain_password: str
 
-
+class RedisConfig(BaseModel):
+    url: str
+    token: str
+    
+class Stack(BaseModel):
+    redis: RedisConfig
+    kafka: KafkaConfig
+    
 class ServiceConfigDetail(BaseModel):
     filename: str
     topic: str
@@ -23,5 +31,5 @@ class ServiceConfig(BaseModel):
     top_scorers: ServiceConfigDetail
     
 class CliAppConfig(BaseModel):
-    kafka: KafkaConfig
+    stacks: list[Stack]
     service: ServiceConfig

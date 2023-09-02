@@ -1,0 +1,27 @@
+newyeti_1:
+  redis:
+    url: https://gusc1-sought-glider-30297.upstash.io
+    token: ${oc.env:KAFKA_PASSWORD}
+  kafka: 
+    bootstrap_servers: 
+      - unbiased-coral-13008-us1-kafka.upstash.io:9092
+    client_id: 'newyeti-cluster-0'
+    sasl_mechanism: SCRAM-SHA-256
+    security_protocol: SASL_SSL
+    sasl_plain_username: ${oc.env:KAFKA_USERNAME}
+    sasl_plain_password: ${oc.env:KAFKA_PASSWORD}
+newyeti_2:
+  redis:
+    url: https://gusc1-sought-glider-30297.upstash.io
+    token: ${oc.env:KAFKA_PASSWORD}
+  kafka: 
+    bootstrap_servers: 
+      - unbiased-coral-13008-us1-kafka.upstash.io:9092
+    client_id: 'newyeti-cluster-0'
+    sasl_mechanism: SCRAM-SHA-256
+    security_protocol: SASL_SSL
+    sasl_plain_username: ${oc.env:KAFKA_USERNAME}
+    sasl_plain_password: ${oc.env:KAFKA_PASSWORD}
+
+
+

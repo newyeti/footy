@@ -13,8 +13,12 @@ parent_directory = os.path.abspath(os.path.join(current_directory, "../../.."))
 sys.path.insert(0, parent_directory)
 
 from app.entrypoints.cmd.config import CliAppConfig
-from app.adapters.services import kafka_service_impl
+from app.adapters.services import (
+    kafka_service_impl, 
+    redis_service_impl
+)
 from app.entrypoints.cmd.client.switch import Switch
+
 
 
 def load_config(config_dir: str, config_name: str, version_base = "1.3"):
@@ -51,9 +55,22 @@ def main():
         raise FileNotFoundError(f"File {location} not found.")
     
     app_config = load_config(f"{current_directory}/config", "app")
-    kafka_producer = kafka_service_impl.KafkaProducerSingleton(app_config.kafka)
-    switch = Switch(kafka_producer=kafka_producer, service_config=app_config.service)
-    switch.execute(service=service, season=season, loc=location)
+    
+    kafka_instances = []
+    redis_instances = []
+
+    for stack in app_config.stacks:
+        redis_config = stack.redis
+        kafka_config = stack.kafka
+        
+        redis = redis_service_impl.RedisSingleton(redis_config=redis_config)
+        kafka = kafka_service_impl.KafkaSingleton(kafka_config=kafka_config, redis=redis)
+        
+        redis_instances.append(redis)
+        kafka_instances.append(kafka)
+    
+    # switch = Switch(kafka_producer=kafka_producer, service_config=app_config.service)
+    # switch.execute(service=service, season=season, loc=location)
 
 if __name__ == "__main__":
     main()
