@@ -10,6 +10,7 @@ class KafkaConfig(BaseModel):
     sasl_plain_password: str
 
 class RedisConfig(BaseModel):
+    client_id: str
     url: str
     token: str
     

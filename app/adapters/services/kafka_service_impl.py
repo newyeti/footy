@@ -20,9 +20,9 @@ def kafka_producer_initializer(instance, kafka_config):
 
 @singleton_with_initializer(kafka_producer_initializer)
 class KafkaSingleton:
-    def __init__(self, kafka_config: KafkaConfig, redis: RedisSingleton):
+    def __init__(self, name: str, kafka_config: KafkaConfig):
+        self.name = name
         self.kafka_config = kafka_config
-        self.redis = redis
         pass
     
     def send(self, topic: str, message: str) -> None:
