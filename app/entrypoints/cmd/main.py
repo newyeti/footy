@@ -14,6 +14,8 @@ from app.adapters.services import (
 )
 # from app.entrypoints.cmd.client.switch import Switch
 from app.core.tools.hydra import load_app_config
+from app.core.tools.linked_list import LinkedList
+from app.core.model.domain import MessageHelper
 
 def main():
     parser = argparse.ArgumentParser(description="Telemetry")
@@ -32,9 +34,7 @@ def main():
         raise FileNotFoundError(f"File {location} not found.")
     
     app_config = load_app_config(f"{current_directory}/config", "app")
-    
-    kafka_instances = []
-    redis_instances = []
+    messaga_helper_instances = LinkedList[MessageHelper]()
 
     for stack in app_config.stacks:
         redis_config = stack.redis
@@ -42,9 +42,7 @@ def main():
         
         redis = redis_service_impl.RedisSingleton(name=redis_config.client_id, redis_config=redis_config)
         kafka = kafka_service_impl.KafkaSingleton(name=kafka_config.client_id, kafka_config=kafka_config)
-        
-        redis_instances.append(redis)
-        kafka_instances.append(kafka)
+        messaga_helper_instances.append(MessageHelper(kafka=kafka, redis=redis))
     
     # switch = Switch(kafka_producer=kafka_producer, service_config=app_config.service)
     # switch.execute(service=service, season=season, loc=location)
