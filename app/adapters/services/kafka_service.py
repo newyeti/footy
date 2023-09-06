@@ -4,7 +4,7 @@ import certifi
 import ssl
 from app.core.tools.decorators import singleton_with_initializer
 from app.entrypoints.cmd.config import KafkaConfig
-from app.adapters.services.redis_service_impl import RedisSingleton
+from app.adapters.services.redis_service import RedisSingleton
 
 def kafka_producer_initializer(instance, kafka_config):
     instance.producer = KafkaProducer(

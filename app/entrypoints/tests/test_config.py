@@ -12,7 +12,7 @@ config_directory = os.path.abspath(os.path.join(current_directory, "../cmd/confi
 sys.path.insert(0, parent_directory)
 
 from app.core.tools import hydra
-from app.adapters.services import kafka_service_impl, redis_service_impl
+from app.adapters.services import kafka_service, redis_service
 
 def load_config():
     return hydra.load_app_config(f"{config_directory}", "app")
@@ -25,8 +25,8 @@ def test_singleton_objects():
     for stack in app_config.stacks:
         kafka_config = stack.kafka
         redis_config = stack.redis
-        kafka = kafka_service_impl.KafkaSingleton(name=kafka_config.client_id,kafka_config=kafka_config)
-        redis = redis_service_impl.RedisSingleton(name=redis_config.client_id, redis_config=redis_config)
+        kafka = kafka_service.KafkaSingleton(name=kafka_config.client_id,kafka_config=kafka_config)
+        redis = redis_service.RedisSingleton(name=redis_config.client_id, redis_config=redis_config)
         kafka_instances.add(kafka)
         redis_instances.add(redis)
     

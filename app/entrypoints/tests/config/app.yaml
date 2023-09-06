@@ -6,7 +6,5 @@ defaults:
 app:
   name: Telemetry CLI
   stacks: 
-  - ${newyeti_1}
-  - ${newyeti_2}
-  - ${newyeti_3}
+  - ${newyeti_0}
   service: ${service}

@@ -11,8 +11,9 @@ class KafkaConfig(BaseModel):
 
 class RedisConfig(BaseModel):
     client_id: str
-    url: str
-    token: str
+    host: str
+    port: int
+    password: str
     
 class Stack(BaseModel):
     redis: RedisConfig

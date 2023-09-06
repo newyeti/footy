@@ -1,0 +1,14 @@
+newyeti_0:
+  redis:
+    client_id: ${oc.env:NEWYETI0_CLIENT_ID}-redis
+    host: ${oc.env:NEWYETI0_REDIS_HOST}
+    port: ${oc.env:NEWYETI0_REDIS_PORT}
+    password: ${oc.env:NEWYETI0_REDIS_PASSWORD}
+  kafka: 
+    bootstrap_servers: 
+      - ${oc.env:NEWYETI0_KAFKA_BOOTSTRAP_SERVERS}
+    client_id: ${oc.env:NEWYETI0_CLIENT_ID}-kafka
+    sasl_mechanism: SCRAM-SHA-256
+    security_protocol: SASL_SSL
+    sasl_plain_username: ${oc.env:NEWYETI0_KAFKA_USERNAME}
+    sasl_plain_password: ${oc.env:NEWYETI0_KAFKA_PASSWORD}
