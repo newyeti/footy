@@ -24,3 +24,4 @@ async def test_main():
     assert report["newyeti.source.fixture_lineups.v1"] == 2
     assert report["newyeti.source.fixture_player_stats.v1"] == 40
     assert report["newyeti.source.top_scorers.v1"] == 20
+    
