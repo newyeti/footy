@@ -81,6 +81,7 @@ class MessageService:
     async def _send(self, topic:str, message: str):
         try:
             message_helper = await self.get(self._is_kafka_limit_reached)
+            # message_helper.kafka.send(topic=topic, message=message)
             logger.debug(f"message sent to topic= {topic}")
             self._counter += 1
         except (ValueError, KafkaError) as e:

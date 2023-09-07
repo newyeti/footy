@@ -1,0 +1,13 @@
+league_id,fixture_id,elapsed,elapsed_plus,team_id,team_name,player_id,player,assist_player_id,assisted_by,type,detail,comments
+39,867946,20,0,42,Arsenal,127769,Gabriel Martinelli,641,O. Zinchenko,Goal,Normal Goal,
+39,867946,44,0,42,Arsenal,1464,Granit Xhaka,0,,Card,Yellow Card,Simulation
+39,867946,58,0,52,Crystal Palace,1135,O. Édouard,25927,J. Mateta,subst,J. Mateta,
+39,867946,60,0,42,Arsenal,19959,Benjamin White,0,,Card,Yellow Card,Foul
+39,867946,64,0,52,Crystal Palace,18862,Nathaniel Clyne,0,,Card,Yellow Card,Foul
+39,867946,75,0,52,Crystal Palace,3339,C. Doucouré,18852,L. Milivojević,subst,L. Milivojević,
+39,867946,83,0,42,Arsenal,643,Gabriel Jesus,1468,E. Nketiah,subst,E. Nketiah,
+39,867946,83,0,42,Arsenal,641,O. Zinchenko,1117,K. Tierney,subst,K. Tierney,
+39,867946,85,0,42,Arsenal,67971,M. Guéhi,0,,Goal,Own Goal,
+39,867946,86,0,52,Crystal Palace,19586,E. Eze,328808,M. Ebiowei,subst,M. Ebiowei,
+39,867946,86,0,52,Crystal Palace,18843,J. Schlupp,18806,W. Hughes,subst,W. Hughes,
+39,867946,90,3,42,Arsenal,37127,M. Ødegaard,1427,A. Lokonga,subst,A. Lokonga,

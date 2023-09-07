@@ -1,0 +1,21 @@
+league_id,team_id,name,code,country,is_national,founded,venuename,venuesurface,venueaddress,venuecity,venuecapacity
+39,33,Manchester United,MUN,England,false,1878,,grass,Sir Matt Busby Way,Manchester,76212
+39,34,Newcastle,NEW,England,false,1892,,grass,St. James&apos; Street,Newcastle upon Tyne,52758
+39,35,Bournemouth,BOU,England,false,1899,,grass,"Dean Court, Kings Park","Bournemouth, Dorset",12000
+39,36,Fulham,FUL,England,false,1879,,grass,Stevenage Road,London,25700
+39,39,Wolves,WOL,England,false,1877,,grass,Waterloo Road,"Wolverhampton, West Midlands",34624
+39,40,Liverpool,LIV,England,false,1892,,grass,Anfield Road,Liverpool,55212
+39,41,Southampton,SOU,England,false,1885,,grass,Britannia Road,"Southampton, Hampshire",32689
+39,42,Arsenal,ARS,England,false,1886,,grass,Queensland Road,London,60383
+39,45,Everton,EVE,England,false,1878,,grass,Goodison Road,Liverpool,40569
+39,46,Leicester,LEI,England,false,1884,,grass,Filbert Way,"Leicester, Leicestershire",34310
+39,47,Tottenham,TOT,England,false,1882,,grass,"Bill Nicholson Way, 748 High Road",London,62850
+39,48,West Ham,WES,England,false,1895,,grass,"Marshgate Lane, Stratford",London,62500
+39,49,Chelsea,CHE,England,false,1905,,grass,Fulham Road,London,41841
+39,50,Manchester City,MAC,England,false,1880,,grass,Rowsley Street,Manchester,55097
+39,51,Brighton,BRI,England,false,1901,,grass,Village Way,"Falmer, East Sussex",31800
+39,52,Crystal Palace,CRY,England,false,1905,,grass,Holmesdale Road,London,26309
+39,55,Brentford,BRE,England,false,1889,,grass,"166 Lionel Rd N, Brentford","Brentford, Middlesex",17250
+39,63,Leeds,LEE,England,false,1919,,grass,Elland Road,"Leeds, West Yorkshire",40204
+39,65,Nottingham Forest,NOT,England,false,1865,,grass,Pavilion Road,"Nottingham, Nottinghamshire",30576
+39,66,Aston Villa,AST,England,false,1874,,grass,Trinity Road,Birmingham,42788

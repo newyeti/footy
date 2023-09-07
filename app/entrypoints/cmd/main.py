@@ -21,8 +21,8 @@ from app.core.tools.hydra import load_app_config
 from app.core.tools.linked_list import LinkedList
 from app.entrypoints.cmd.client.switch import Switch
 import time
-from app.core.exceptions.client_exception import ClientException
 from app.entrypoints.cmd.config import CliAppConfig
+from app.entrypoints.tests.test_config import config_directory
 
 logging.basicConfig(level=logging.INFO, 
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -45,8 +45,26 @@ def get_message_service(app_config: CliAppConfig) -> messaging_service.MessageSe
         messaga_helpers.append(message_helper)
     return messaging_service.MessageService(message_helpers=messaga_helpers, batch_size=50)
 
-async def run(tasks):    
-    return await asyncio.gather(*tasks)
+async def run(config_directory: str, services: list[str], service: str, season: int, location: str):
+    app_config = load_app_config(config_directory, "app")
+    message_service = get_message_service(app_config=app_config)
+    switch = Switch(message_service=message_service, service_config=app_config.service)
+    
+    tasks = []
+    if service not in services:
+        for serv in services:
+            tasks.append(asyncio.create_task(switch.execute(serv, season, location)))
+    else:
+        tasks.append(asyncio.create_task(switch.execute(service, season, location))) 
+
+    # Run asynchronous tasks
+    await asyncio.gather(*tasks)
+    
+    #Flush remaining messages
+    await message_service.flush(message_service.messages)
+    
+    return message_service.get_report()
+    
 
 async def main():
     parser = argparse.ArgumentParser(description="Telemetry")
@@ -65,23 +83,15 @@ async def main():
     if os.path.isdir(location) == False:
         raise FileNotFoundError(f"File {location} not found.")
     
-    app_config = load_app_config(f"{current_directory}/config", "app")
-    message_service = get_message_service(app_config=app_config)
-    switch = Switch(message_service=message_service, service_config=app_config.service)
+    config_directory = f"{current_directory}/config"
     
-    tasks = []
-    if service not in services:
-        for serv in services:
-            tasks.append(asyncio.create_task(switch.execute(serv, season, location)))
-    else:
-        tasks.append(asyncio.create_task(switch.execute(service, season, location))) 
-
-    # Run asynchronous tasks
-    await run(tasks=tasks)
+    report = await run(config_directory=config_directory, 
+              services=services, 
+              service=service, 
+              season=season, 
+              location=location)
     
-    #Flush remaining messages
-    await message_service.flush(message_service.messages)
-    logger.info(f"Message report: {message_service.get_report()}")
+    logger.info(f"Message report: {report}")    
     
 if __name__ == "__main__":
     current_time = time.time()

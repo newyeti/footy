@@ -1,14 +1,26 @@
 import os
-from app.core.tools.hydra import load_app_config
-from app.entrypoints.cmd.main import get_message_service
-from app.entrypoints.cmd.client.switch import Switch
+from app.entrypoints.cmd.main import run
 import os.path
+import pytest
 
-def test_main():
+@pytest.mark.asyncio
+async def test_main():
     current_directory =  os.path.abspath(os.path.dirname(__file__))
-    data_directory = os.path.abspath(os.path.join(current_directory, "../../../data/2022"))
-    app_config = load_app_config(f"{current_directory}/config", "app")
-    message_service = get_message_service(app_config=app_config)
-    switch = Switch(message_service=message_service, service_config=app_config.service)
-    switch.execute("teams", 2022, data_directory)
+    config_directory = os.path.abspath(os.path.join(current_directory, "config"))
+    data_directory = os.path.abspath(os.path.join(current_directory, "data/2022"))
+    services = ["teams", "fixtures", "fixture_events", "fixture_lineups", "fixture_player_stats", "top_scorers"]
+    service = "all"
     
+    report = await run(config_directory=config_directory,
+        services=services,
+        service=service,
+        season=2022,
+        location=data_directory)
+    
+    assert report is not None
+    assert report["newyeti.source.teams.v1"] == 20
+    assert report["newyeti.source.fixtures.v1"] == 1
+    assert report["newyeti.source.fixture_events.v1"] == 12
+    assert report["newyeti.source.fixture_lineups.v1"] == 2
+    assert report["newyeti.source.fixture_player_stats.v1"] == 40
+    assert report["newyeti.source.top_scorers.v1"] == 20
