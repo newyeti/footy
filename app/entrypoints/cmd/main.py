@@ -43,16 +43,9 @@ def get_message_service(app_config: CliAppConfig) -> messaging_service.MessageSe
         }
         message_helper = messaging_service.MessageHelper(**data_dict)
         messaga_helpers.append(message_helper)
-        return messaging_service.MessageService(message_helpers=messaga_helpers, batch_size=10)
+    return messaging_service.MessageService(message_helpers=messaga_helpers, batch_size=50)
 
-async def run(blocking_functions: list[callable]):
-    loop = asyncio.get_event_loop()
-    tasks = []
-    
-    for func in blocking_functions:
-        task = loop.run_in_executor(None, func=func)
-        tasks.append(task)
-    
+async def run(tasks):    
     return await asyncio.gather(*tasks)
 
 async def main():
@@ -76,15 +69,19 @@ async def main():
     message_service = get_message_service(app_config=app_config)
     switch = Switch(message_service=message_service, service_config=app_config.service)
     
-    blocking_functions = []
+    tasks = []
     if service not in services:
         for serv in services:
-            blocking_functions.append(partial(switch.execute, serv, season, location))
+            tasks.append(asyncio.create_task(switch.execute(serv, season, location)))
     else:
-        blocking_functions.append(partial(switch.execute, service, season, location))   
+        tasks.append(asyncio.create_task(switch.execute(service, season, location))) 
 
-    await run(blocking_functions=blocking_functions)
-        
+    # Run asynchronous tasks
+    await run(tasks=tasks)
+    
+    #Flush remaining messages
+    await message_service.flush(message_service.messages)
+    logger.info(f"Message report: {message_service.get_report()}")
     
 if __name__ == "__main__":
     current_time = time.time()

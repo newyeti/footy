@@ -75,6 +75,10 @@ class FixturePlayerStatDataReader(DataReader):
                 datetime_obj = datetime.fromtimestamp(epoch_timestamp)
                 formatted_date = datetime_obj.strftime('%Y-%m-%dT%H:%M:%S+00:00')
             
+            rating = row['rating']
+            if row['rating'] == "":
+                rating = 0.0
+            
             fixture_player_stat_data = {
                 "league_id": row['league_id'],
                 "fixture_id": row['fixture_id'],
@@ -85,7 +89,7 @@ class FixturePlayerStatDataReader(DataReader):
                 "team_name": row['team_name'],
                 "number": row['number'],
                 "position": row['position'],
-                "rating": row['rating'],
+                "rating": rating,
                 "minutes_played": row['minutes_played'],
                 "caption": row['caption'],
                 "substitute": row['substitute'],
