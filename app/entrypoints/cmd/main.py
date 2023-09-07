@@ -1,8 +1,10 @@
+import asyncio
 import sys
 import os
 import os.path
 import argparse
 import logging
+from functools import partial
 
 # Add the parent directory (app) to sys.path
 current_directory =  os.path.abspath(os.path.dirname(__file__))
@@ -42,10 +44,21 @@ def get_message_service(app_config: CliAppConfig) -> messaging_service.MessageSe
         message_helper = messaging_service.MessageHelper(**data_dict)
         messaga_helpers.append(message_helper)
         return messaging_service.MessageService(message_helpers=messaga_helpers, batch_size=10)
+
+async def run(blocking_functions: list[callable]):
+    loop = asyncio.get_event_loop()
+    tasks = []
     
-def main():
+    for func in blocking_functions:
+        task = loop.run_in_executor(None, func=func)
+        tasks.append(task)
+    
+    return await asyncio.gather(*tasks)
+
+async def main():
     parser = argparse.ArgumentParser(description="Telemetry")
-    parser.add_argument("-service", choices=["teams", "fixtures", "fixture_events", "fixture_lineups", "fixture_player_stats", "top_scorers"], required=True,
+    services = ["teams", "fixtures", "fixture_events", "fixture_lineups", "fixture_player_stats", "top_scorers"]
+    parser.add_argument("-service", choices=["all"] + services, required=True,
                         help="Choose the service from the list: [team, fixture]")
     parser.add_argument("-loc", type=str, required=True, help="Path where files are located")
     parser.add_argument("-season", type=int, required=True, help="Year (4 digits)")
@@ -61,13 +74,21 @@ def main():
     
     app_config = load_app_config(f"{current_directory}/config", "app")
     message_service = get_message_service(app_config=app_config)
-
     switch = Switch(message_service=message_service, service_config=app_config.service)
+    
+    blocking_functions = []
+    if service not in services:
+        for serv in services:
+            blocking_functions.append(partial(switch.execute, serv, season, location))
+    else:
+        blocking_functions.append(partial(switch.execute, service, season, location))   
+
+    await run(blocking_functions=blocking_functions)
+        
+    
+if __name__ == "__main__":
     current_time = time.time()
-    switch.execute(service=service, season=season, loc=location)    
+    asyncio.run(main())
     end_time = time.time() - current_time
     logger.info(f"Total time taken: {end_time}")
-
-if __name__ == "__main__":
-    main()
     

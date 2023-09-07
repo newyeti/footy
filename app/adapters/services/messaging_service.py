@@ -27,7 +27,7 @@ class MessageService:
         self.messages : list[MessageEvent] = []
     
     def _is_kafka_limit_reached(self, data: MessageHelper):
-        return False
+        return True
     
     def get(self, comparator_func) -> MessageHelper:
         while self.current is not None and comparator_func(self.current.data) == False:
@@ -54,7 +54,7 @@ class MessageService:
     def _send(self, topic:str, message: str):
         try:
             message_helper = self.get(self._is_kafka_limit_reached)
-            logger.info(f"message sent to topic= {topic}")
+            logger.debug(f"message sent to topic= {topic}")
         except ValueError as e:
             raise ClientException(f"Messages cannot be sent because {e}")
     

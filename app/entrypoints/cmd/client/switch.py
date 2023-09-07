@@ -37,9 +37,12 @@ class Switch:
             raise ClientException(f"Invalid service name: {service}")
 
     def _teams(self, season, loc):
+        logger.debug(f"Loading teams - starting")
         file=loc+"/"+self._service_config.teams.filename
         data_reader = TeamDataReader(file=file)
         teams = data_reader.read()
+        logger.debug(f"Loading teams - starting")
+        
         count = 0
         
         try:
@@ -56,10 +59,13 @@ class Switch:
             
         logger.info(f"Total messages sent to topic {self._service_config.teams.topic}: {count}")
     
-    def _find_fixtures(self, season, loc) -> list[Fixture] :
+    def _find_fixtures(self, season, loc) -> list[Fixture]:
+        logger.debug(f"Loading find_fixtures - starting")
         file=loc+"/"+self._service_config.fixtures.filename
         data_reader = FixtureDataReader(file=file)
         fixtures = data_reader.read()
+        logger.debug(f"Loading find_fixtures - completed")
+        
         for fixture in fixtures:
             fixture.season = season
         return fixtures
@@ -70,8 +76,11 @@ class Switch:
             fixtures = self._find_fixtures(season, loc)
             for fixture in fixtures:
                 fixture.season = season
-                self._message_service.add_message(messaging_service.MessageEvent(self._service_config.fixtures.topic, 
-                                        convert_to_json(fixture)))
+                data_dict = {
+                    "topic": self._service_config.fixtures.topic,
+                    "message": convert_to_json(fixture),
+                }
+                self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
                 count += 1
         except ClientException as e:
             logger.error(e)
@@ -79,13 +88,13 @@ class Switch:
         logger.info(f"Total messages sent to topic {self._service_config.fixtures.topic}: {count}")
     
     def _fixture_events(self, season, loc):
-        logger.info(f"Loading fixtures - starting")
+        logger.debug(f"Loading fixtures - starting")
         fixtures = self._find_fixtures(season, loc)
         if len(fixtures) == 0:
             raise ClientException(f"Fixtures are not available. " +
                                   + "Please make sure {self._service_config.fixtures.filename} is available in location {location}")
             
-        logger.info(f"Loading fixtures - completed")
+        logger.debug(f"Loading fixtures - completed")
         
         fixture_map = self._fixture_event_date_mapper(fixtures=fixtures)
         file=loc+"/"+self._service_config.fixture_events.filename
@@ -98,7 +107,13 @@ class Switch:
                 event.season = season
                 if event.fixture_id in fixture_map:
                     event.event_date = fixture_map[event.fixture_id]
-                self._message_service.add_message(messaging_service.MessageEven(self._service_config.fixture_events.topic, convert_to_json(event)))
+                
+                data_dict = {
+                    "topic": self._service_config.fixture_events.topic,
+                    "message": convert_to_json(event),
+                }
+                
+                self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
                 count += 1
         except ClientException as e:
             logger.error(e)
@@ -106,13 +121,13 @@ class Switch:
         logger.info(f"Total messages sent to topic {self._service_config.fixture_events.topic}: {count}")
     
     def _fixture_lineup(self, season, loc):
-        logger.info(f"Loading fixtures - starting")
+        logger.debug(f"Loading fixture_lineup - starting")
         fixtures = self._find_fixtures(season, loc)
         if len(fixtures) == 0:
             raise ClientException(f"Fixtures are not available. " +
                                   + "Please make sure {self._service_config.fixtures.filename} is available in location {location}")
             
-        logger.info(f"Loading fixtures - completed")
+        logger.debug(f"Loading fixture_lineup  - completed")
         
         fixture_map = self._fixture_event_date_mapper(fixtures=fixtures)
         file=loc+"/"+self._service_config.fixture_lineups.filename
@@ -125,7 +140,13 @@ class Switch:
                 lineup.season = season
                 if lineup.fixture_id in fixture_map:
                     lineup.event_date = fixture_map[lineup.fixture_id]
-                self._message_service.add_message(messaging_service.MessageEven(self._service_config.fixture_lineups.topic, convert_to_json(lineup)))
+                    
+                data_dict = {
+                    "topic": self._service_config.fixture_lineups.topic,
+                    "message": convert_to_json(lineup),
+                }    
+                    
+                self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
                 count += 1
         except ClientException as e:
             logger.error(e)
@@ -133,14 +154,23 @@ class Switch:
         logger.info(f"Total messages sent to topic {self._service_config.fixture_lineups.topic}: {count}")
     
     def _fixture_player_stats(self, season, loc):
+        logger.debug(f"Loading fixture_player_stats - starting")
         file=loc+"/"+self._service_config.fixture_player_stats.filename
         data_reader = FixturePlayerStatDataReader(file=file)
         player_stats = data_reader.read()
+        logger.debug(f"Loading fixture_player_stats - completed")
+        
         count = 0
         try:
             for stat in player_stats:
                 stat.season = season
-                self._message_service.add_message(messaging_service.MessageEven(self._service_config.fixture_player_stats.topic, convert_to_json(stat)))
+                
+                data_dict = {
+                    "topic": self._service_config.fixture_player_stats.topic,
+                    "message": convert_to_json(stat),
+                }  
+                
+                self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
                 count += 1
         except ClientException as e:
             logger.error(e)
@@ -148,14 +178,23 @@ class Switch:
         logger.info(f"Total messages sent to topic {self._service_config.fixture_player_stats.topic}: {count}")
         
     def _top_scorers(self, season, loc):
+        logger.debug(f"Loading top_scorers - starting")
         file = loc + "/" + self._service_config.top_scorers.filename
         data_reader = TopScorerDataReader(file=file)
         top_scorers = data_reader.read()
+        logger.debug(f"Loading top_scorers - completed")
+        
         count = 0
         try:
             for ts in top_scorers:
                 ts.season = season
-                self._message_service.add_message(messaging_service.MessageEven(self._service_config.top_scorers.topic, convert_to_json(ts)))
+                
+                data_dict = {
+                    "topic": self._service_config.top_scorers.topic,
+                    "message": convert_to_json(ts),
+                } 
+                
+                self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
                 count += 1
         except ClientException as e:
             logger.error(e)

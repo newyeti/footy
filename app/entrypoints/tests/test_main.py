@@ -11,3 +11,4 @@ def test_main():
     message_service = get_message_service(app_config=app_config)
     switch = Switch(message_service=message_service, service_config=app_config.service)
     switch.execute("teams", 2022, data_directory)
+    
