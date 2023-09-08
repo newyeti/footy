@@ -23,6 +23,7 @@ from app.entrypoints.cmd.client.switch import Switch
 import time
 from app.entrypoints.cmd.config import CliAppConfig
 from app.entrypoints.tests.test_config import config_directory
+from app.core.exceptions.client_exception import ClientException
 
 logging.basicConfig(level=logging.INFO, 
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -57,11 +58,14 @@ async def run(config_directory: str, services: list[str], service: str, season: 
     else:
         tasks.append(asyncio.create_task(switch.execute(service, season, location))) 
 
-    # Run asynchronous tasks
-    await asyncio.gather(*tasks)
-    
-    #Flush remaining messages
-    await message_service.flush(message_service.messages)
+    try:
+        # Run asynchronous tasks
+        await asyncio.gather(*tasks)
+        
+        #Flush remaining messages
+        await message_service.flush(message_service.messages)
+    except ClientException as e:
+        logger.error(e)
     
     return message_service.get_report()
     

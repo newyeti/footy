@@ -5,6 +5,9 @@ import ssl
 from app.core.tools.decorators import singleton_with_initializer
 from app.entrypoints.cmd.config import KafkaConfig
 from app.adapters.services.redis_service import RedisSingleton
+import logging
+
+logger = logging.getLogger(__name__)
 
 def kafka_producer_initializer(instance, kafka_config):
     instance.producer = KafkaProducer(
@@ -30,6 +33,6 @@ class KafkaSingleton:
         
         try:
             record_metadata = future.get(timeout=10)
-            print(f"Message delivered to {record_metadata.topic} [{record_metadata.partition}]")
+            logger.debug(f"Message delivered to {record_metadata.topic} [{record_metadata.partition}]")
         except KafkaError as e:
             print(f"Message delivery failed: {e}")
