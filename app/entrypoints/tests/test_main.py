@@ -28,13 +28,13 @@ async def test_main():
     
     print(report)
     
-    # assert report is not None
-    # assert "newyeti.source.teams.v1" in report and report["newyeti.source.teams.v1"] == 20
-    # assert "newyeti.source.fixtures.v1" in report and report["newyeti.source.fixtures.v1"] == 1
-    # assert "newyeti.source.fixture_events.v1" in report and report["newyeti.source.fixture_events.v1"] == 12
-    # assert "newyeti.source.fixture_lineups.v1" in report and report["newyeti.source.fixture_lineups.v1"] == 2
-    # assert "newyeti.source.fixture_player_stats.v1" in report and report["newyeti.source.fixture_player_stats.v1"] == 40
-    # assert "newyeti.source.top_scorers.v1" in report and report["newyeti.source.top_scorers.v1"] == 20
+    assert report is not None
+    assert "newyeti.source.teams.v1" in report and report["newyeti.source.teams.v1"] == 20
+    assert "newyeti.source.fixtures.v1" in report and report["newyeti.source.fixtures.v1"] == 1
+    assert "newyeti.source.fixture_events.v1" in report and report["newyeti.source.fixture_events.v1"] == 12
+    assert "newyeti.source.fixture_lineups.v1" in report and report["newyeti.source.fixture_lineups.v1"] == 2
+    assert "newyeti.source.fixture_player_stats.v1" in report and report["newyeti.source.fixture_player_stats.v1"] == 40
+    assert "newyeti.source.top_scorers.v1" in report and report["newyeti.source.top_scorers.v1"] == 20
 
 if __name__ == "__main__":
     asyncio.run(test_main())
