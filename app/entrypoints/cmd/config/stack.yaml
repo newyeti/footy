@@ -1,4 +1,4 @@
-newyeti_1:
+newyeti-1:
   redis:
     client_id: ${oc.env:NEWYETI1_CLIENT_ID}-redis
     host: ${oc.env:NEWYETI1_REDIS_HOST}
@@ -12,7 +12,7 @@ newyeti_1:
     security_protocol: SASL_SSL
     sasl_plain_username: ${oc.env:NEWYETI1_KAFKA_USERNAME}
     sasl_plain_password: ${oc.env:NEWYETI1_KAFKA_PASSWORD}
-newyeti_2:
+newyeti-2:
   redis:
     client_id: ${oc.env:NEWYETI2_CLIENT_ID}-redis
     host: ${oc.env:NEWYETI2_REDIS_HOST}
@@ -26,7 +26,7 @@ newyeti_2:
     security_protocol: SASL_SSL
     sasl_plain_username: ${oc.env:NEWYETI2_KAFKA_USERNAME}
     sasl_plain_password: ${oc.env:NEWYETI2_KAFKA_PASSWORD}
-newyeti_3:
+newyeti-3:
   redis:
     client_id: ${oc.env:NEWYETI3_CLIENT_ID}-redis
     host: ${oc.env:NEWYETI3_REDIS_HOST}

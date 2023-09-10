@@ -4,7 +4,6 @@ import certifi
 import ssl
 from app.core.tools.decorators import singleton_with_initializer
 from app.entrypoints.cmd.config import KafkaConfig
-from app.adapters.services.redis_service import RedisSingleton
 import logging
 
 logger = logging.getLogger(__name__)

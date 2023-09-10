@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from redis import Redis
+import datetime
 from app.core.tools.decorators import singleton_with_initializer
 from app.entrypoints.cmd.config import RedisConfig
 
@@ -21,5 +22,18 @@ class RedisSingleton:
     def get(self, key: str):
         return self.redis.get(key)
 
-    def set(self, key: str, value: str, expiryDays: int):
-        self.redis.set(name=key, value=value, ex=timedelta(days=expiryDays))
+    def set(self, key: str, value: str, expiry: timedelta):
+        self.redis.set(name=key, value=value, ex=expiry)
+        
+    def get_key(self, key: str, prefix: str = "", suffix: str = ""):
+        if prefix is None:
+            prefix = ""
+        elif prefix != "":
+            prefix = f"{prefix}_"
+        
+        if suffix is None:
+            suffix = ""
+        elif suffix != "":
+            suffix = f"_{suffix}"
+            
+        return f"{prefix}{key}{suffix}"

@@ -9,6 +9,7 @@ from app.adapters.services.readers.fixture_lineup_data_reader import FixtureLine
 from app.adapters.services.readers.fixture_player_stat_data_reader import FixturePlayerStatDataReader
 from app.adapters.services.readers.fixture_event_data_reader import FixtureEventDataReader
 from app.adapters.services.readers.top_scorer_reader import TopScorerDataReader
+from app.adapters.services.redis_service import RedisSingleton
 
 import asyncio
 import logging
@@ -18,9 +19,12 @@ logger = logging.getLogger(__name__)
 class Switch:
     """Executes the date import service and sends data to kafka topic"""
     
-    def __init__(self, message_service: messaging_service.MessageService, service_config: ServiceConfig) -> None:
+    def __init__(self, message_service: messaging_service.MessageService, 
+                 service_config: ServiceConfig,
+                 db: RedisSingleton) -> None:
         self._message_service = message_service
         self._service_config = service_config
+        self._db = db
         self._services = {
             "teams": self._teams,
             "fixtures": self._fixtures,
@@ -40,21 +44,30 @@ class Switch:
     async def _teams(self, season, loc):
         logger.debug(f"Loading teams - starting")
         file=loc+"/"+self._service_config.teams.filename
+        topic = self._service_config.teams.topic
         data_reader = TeamDataReader(file=file)
         teams = data_reader.read()
+        message_sent = self._message_sent_already(season=season, key=topic)
+        if message_sent > len(teams):
+            logger.info(f"All messages already sent to topic {topic} for season {season}")
+            logger.debug("Skipping sending repeated messages")
+            return
+        
         logger.debug(f"Loading teams - starting")    
         
         count = 0
-        for team in teams:
-            team.season = season
-            data_dict = {
-                "topic": self._service_config.teams.topic,
-                "message": convert_to_json(team),
-            }
-            await self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
-            count += 1
+        for index in range(message_sent, len(teams)):
+            if 0 <= index < len(teams):
+                team = teams[index]
+                team.season = season
+                data_dict = {
+                    "topic": topic,
+                    "message": convert_to_json(team),
+                }
+                await self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
+                count += 1
         
-        logger.info(f"Total messages sent to topic {self._service_config.teams.topic}: {count}")
+        logger.info(f"Total messages sent to topic {topic}: {count}")
     
     def _find_fixtures(self, season, loc) -> list[Fixture]:
         logger.debug(f"Loading find_fixtures - starting")
@@ -67,20 +80,31 @@ class Switch:
             fixture.season = season
         return fixtures
     
+    
     async def _fixtures(self, season, loc):
         count = 0
         fixtures = self._find_fixtures(season, loc)
-        for fixture in fixtures:
-            fixture.season = season
-            data_dict = {
-                "topic": self._service_config.fixtures.topic,
-                "message": convert_to_json(fixture),
-            }
-            await self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
-            count += 1
+        topic = self._service_config.fixtures.topic
+        message_sent = self._message_sent_already(season=season, 
+                                                    key=topic)
+        if message_sent > len(fixtures):
+            logger.info(f"All messages already sent to topic {topic} for season {season}")
+            logger.debug("Skipping sending repeated messages")
+            return
         
-            
-        logger.info(f"Total messages sent to topic {self._service_config.fixtures.topic}: {count}")
+        for index in range(message_sent, len(fixtures)):
+            if 0 <= index < len(fixtures):
+                fixture = fixtures[index]
+                fixture.season = season
+                data_dict = {
+                    "topic": topic,
+                    "message": convert_to_json(fixture),
+                }
+                await self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
+                count += 1
+    
+        logger.info(f"Total messages sent to topic {topic}: {count}")
+    
     
     async def _fixture_events(self, season, loc):
         logger.debug(f"Loading fixtures - starting")
@@ -95,22 +119,31 @@ class Switch:
         file=loc+"/"+self._service_config.fixture_events.filename
         data_reader = FixtureEventDataReader(file=file)
         events = data_reader.read()
-        count =0 
+        topic = self._service_config.fixture_events.topic
+        message_sent = self._message_sent_already(season=season, 
+                                                    key=topic)
+        if message_sent > len(events):
+            logger.info(f"All messages already sent to topic {topic} for season {season}")
+            logger.debug("Skipping sending repeated messages")
+            return
         
-        for event in events:
-            event.season = season
-            if event.fixture_id in fixture_map:
-                event.event_date = fixture_map[event.fixture_id]
-            
-            data_dict = {
-                "topic": self._service_config.fixture_events.topic,
-                "message": convert_to_json(event),
-            }
-            
-            await self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
-            count += 1
-        
-        logger.info(f"Total messages sent to topic {self._service_config.fixture_events.topic}: {count}")
+        count =0
+        for index in range(message_sent, len(events)):
+            if 0 <= index < len(events):
+                event = events[index]
+                event.season = season
+                if event.fixture_id in fixture_map:
+                    event.event_date = fixture_map[event.fixture_id]
+                
+                data_dict = {
+                    "topic": topic,
+                    "message": convert_to_json(event),
+                }
+                
+                await self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
+                count += 1
+                
+        logger.info(f"Total messages sent to topic {topic}: {count}")
     
     async def _fixture_lineup(self, season, loc):
         logger.debug(f"Loading fixture_lineup - starting")
@@ -123,66 +156,93 @@ class Switch:
         
         fixture_map = self._fixture_event_date_mapper(fixtures=fixtures)
         file=loc+"/"+self._service_config.fixture_lineups.filename
+        topic = self._service_config.fixture_lineups.topic
         data_reader = FixtureLineDataReader(file=file)
         lineups = data_reader.read()
-        count = 0
         
-        for lineup in lineups:
-            lineup.season = season
-            if lineup.fixture_id in fixture_map:
-                lineup.event_date = fixture_map[lineup.fixture_id]
-                
-            data_dict = {
-                "topic": self._service_config.fixture_lineups.topic,
-                "message": convert_to_json(lineup),
-            }    
-                
-            await self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
-            count += 1
+        message_sent = self._message_sent_already(season=season, 
+                                                    key=topic)
+        if message_sent > len(lineups):
+            logger.info(f"All messages already sent to topic {topic} for season {season}")
+            logger.debug("Skipping sending repeated messages")
+            return
+        
+        count = 0
+        for index in range(message_sent, len(lineups)):
+            if 0 <= index < len(lineups):
+                lineup = lineups[index]
+                lineup.season = season
+                if lineup.fixture_id in fixture_map:
+                    lineup.event_date = fixture_map[lineup.fixture_id]
+                    
+                data_dict = {
+                    "topic": topic,
+                    "message": convert_to_json(lineup),
+                }    
+                    
+                await self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
+                count += 1
             
-        logger.info(f"Total messages sent to topic {self._service_config.fixture_lineups.topic}: {count}")
+        logger.info(f"Total messages sent to topic {topic}: {count}")
+    
     
     async def _fixture_player_stats(self, season, loc):
         logger.debug(f"Loading fixture_player_stats - starting")
         file=loc+"/"+self._service_config.fixture_player_stats.filename
+        topic = self._service_config.fixture_player_stats.topic
         data_reader = FixturePlayerStatDataReader(file=file)
         player_stats = data_reader.read()
         logger.debug(f"Loading fixture_player_stats - completed")
         
+        message_sent = self._message_sent_already(season=season, 
+                                                    key=topic)
+        if message_sent > len(player_stats):
+            logger.info(f"All messages already sent to topic {topic} for season {season}")
+            logger.debug("Skipping sending repeated messages")
+            return
+        
         count = 0
-        for stat in player_stats:
-            stat.season = season
-            
-            data_dict = {
-                "topic": self._service_config.fixture_player_stats.topic,
-                "message": convert_to_json(stat),
-            }  
-            
-            await self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
-            count += 1
+        for index in range(message_sent, len(player_stats)):
+            if 0 <= index < len(player_stats):
+                stat = player_stats[index]
+                stat.season = season
+                data_dict = {
+                    "topic": topic,
+                    "message": convert_to_json(stat),
+                }  
+                await self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
+                count += 1
             
         logger.info(f"Total messages sent to topic {self._service_config.fixture_player_stats.topic}: {count}")
         
     async def _top_scorers(self, season, loc):
         logger.debug(f"Loading top_scorers - starting")
         file = loc + "/" + self._service_config.top_scorers.filename
+        topic = self._service_config.top_scorers.topic
         data_reader = TopScorerDataReader(file=file)
         top_scorers = data_reader.read()
         logger.debug(f"Loading top_scorers - completed")
         
+        message_sent = self._message_sent_already(season=season, 
+                                                    key=topic)
+        if message_sent > len(top_scorers):
+            logger.info(f"All messages already sent to topic {topic} for season {season}")
+            logger.debug("Skipping sending repeated messages")
+            return
+        
         count = 0
-        for ts in top_scorers:
-            ts.season = season
-            
-            data_dict = {
-                "topic": self._service_config.top_scorers.topic,
-                "message": convert_to_json(ts),
-            } 
-            
-            await self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
-            count += 1
+        for index in range(message_sent, len(top_scorers)):
+            if 0 <= index < len(top_scorers):
+                ts = top_scorers[index]
+                ts.season = season
+                data_dict = {
+                    "topic": topic,
+                    "message": convert_to_json(ts),
+                } 
+                await self._message_service.add_message(messaging_service.MessageEvent(**data_dict))
+                count += 1
        
-        logger.info(f"Total messages sent to topic {self._service_config.top_scorers.topic}: {count}")
+        logger.info(f"Total messages sent to topic {topic}: {count}")
     
     def _fixture_event_date_mapper(self, fixtures : list[Fixture]) -> dict[Fixture]:
         fixture_event_date_map = {}
@@ -192,3 +252,13 @@ class Switch:
                 fixture_event_date_map[fixture.fixture_id] = fixture.event_date
             
         return fixture_event_date_map
+
+    def _message_sent_already(self, season: int, key: str) -> int:
+        message_sent = self._db.get(self._db.get_key(key=key, 
+                                                     prefix=str(season)))
+        if message_sent is not None:
+            message_sent = int(message_sent)
+        else:
+            message_sent = 0
+            
+        return message_sent

@@ -4,7 +4,7 @@ import os
 import os.path
 import argparse
 import logging
-from functools import partial
+from datetime import timedelta
 
 # Add the parent directory (app) to sys.path
 current_directory =  os.path.abspath(os.path.dirname(__file__))
@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 def get_message_service(app_config: CliAppConfig) -> messaging_service.MessageService:
     messaga_helpers = LinkedList[messaging_service.MessageHelper]()
-
+    
     for stack in app_config.stacks:
         redis_config = stack.redis
         kafka_config = stack.kafka
@@ -48,8 +48,11 @@ def get_message_service(app_config: CliAppConfig) -> messaging_service.MessageSe
 
 async def run(config_directory: str, services: list[str], service: str, season: int, location: str):
     app_config = load_app_config(config_directory, "app")
+    redis_control = redis_service.RedisSingleton(
+        name=app_config.control.redis.client_id,
+        redis_config=app_config.control.redis)
     message_service = get_message_service(app_config=app_config)
-    switch = Switch(message_service=message_service, service_config=app_config.service)
+    switch = Switch(message_service=message_service, service_config=app_config.service, db=redis_control)
     
     tasks = []
     if service not in services:
@@ -67,7 +70,13 @@ async def run(config_directory: str, services: list[str], service: str, season: 
     except ClientException as e:
         logger.error(e)
     
-    return message_service.get_report()
+    report = message_service.get_report()
+    
+    for key, value in report.items():
+        redis_key = redis_control.get_key(prefix=str(season), key=key, suffix=None)
+        redis_control.set(key=redis_key, value=value, expiry=timedelta(days=7))
+    
+    return report
     
 
 async def main():

@@ -1,12 +1,12 @@
-
-from app.core.tools.linked_list import LinkedList
-import datetime
-from kafka.errors import KafkaError
 import logging
+from app.core.tools.linked_list import LinkedList
+from datetime import datetime, timedelta
+from kafka.errors import KafkaError
 from pydantic import BaseModel
 from app.core.exceptions.client_exception import ClientException
 from app.adapters.services.kafka_service import KafkaSingleton
 from app.adapters.services.redis_service import RedisSingleton
+
 
 logger = logging.getLogger(__name__)
 
@@ -34,10 +34,7 @@ class MessageService:
         self.batch_size=batch_size
         self.messages : list[MessageEvent] = []
         self._counter = self.get_kafka_message_count(self.current.data)
-    
-    def _get_redis_key(self, key: str):
-        current_date = datetime.datetime.now().date()
-        return f"{key}_{current_date}"
+        
     
     async def _is_kafka_limit_reached(self, data: MessageHelper):
         if self._counter < MAX_KAFKA_MESSAGE_LIMIT:
@@ -46,6 +43,7 @@ class MessageService:
             self._counter = 0
             logger.error(f"Kafka limit reached.")
             return True
+        
     
     async def get(self, comparator_func) -> MessageHelper:
         while self.current is not None and await comparator_func(self.current.data) == True:
@@ -54,7 +52,7 @@ class MessageService:
             self.current = self.message_helpers.head
             
             if self.current is None:
-                raise ValueError(f"All Kafka instances are exausted for {datetime.datetime.now().date()}")
+                raise ValueError(f"All Kafka instances are exausted for {datetime.now().date()}")
             
             self._counter = self.get_kafka_message_count(self.current.data)
             logger.info(f"Using Kafka instance {self.current.data.kafka.name}")
@@ -62,7 +60,8 @@ class MessageService:
         if self.current is not None:    
             return self.current.data
         
-        raise ValueError(f"All Kafka instances are exausted for {datetime.datetime.now().date()}")
+        raise ValueError(f"All Kafka instances are exausted for {datetime.now().date()}")
+    
     
     async def add_message(self, message: MessageEvent):
         self.messages.append(message)
@@ -72,9 +71,11 @@ class MessageService:
             await self.flush(batch_messages)
             self.messages = []
             logger.debug(f"finished sending  batch of messages. Current message size: {len(self.messages)}")
+    
         
     async def flush(self, messages):
        await self.send_message_async(messages=messages)
+    
        
     async def send_message_async(self, messages: list[MessageEvent]):
         """Send messages to Kafka topic"""
@@ -87,6 +88,7 @@ class MessageService:
         messages = []
         self.set_kafka_message_count(self.current.data, self.batch_size)
     
+    
     async def _send(self, topic:str, message: str):
         try:
             message_helper = await self.get(self._is_kafka_limit_reached)
@@ -96,25 +98,30 @@ class MessageService:
         except (ValueError, KafkaError) as e:
             raise ClientException(f"Messages cannot be sent because {e}")
     
+    
     def get_kafka_message_count(self, message_helper: MessageHelper) -> int:
-        redis_key = self._get_redis_key(DAILY_KAFKA_MESSAGE_SENT_COUNT_KEY)
+        redis_key = message_helper.redis.get_key(key=DAILY_KAFKA_MESSAGE_SENT_COUNT_KEY, 
+                                                 suffix=datetime.now().date())
         logger.debug(f"redis_key: {redis_key}")
         
         kafka_messages_sent = self.current.data.redis.get(redis_key)
         if kafka_messages_sent is None:
             kafka_messages_sent = 0
-            message_helper.redis.set(redis_key, kafka_messages_sent, 1)
+            message_helper.redis.set(redis_key, kafka_messages_sent, timedelta(days=1))
             logger.debug(f"Default value set for redis_key: {redis_key}")
             
         return int(kafka_messages_sent)
     
+    
     def set_kafka_message_count(self, message_helper: MessageHelper, count: int):
-        redis_key = self._get_redis_key(DAILY_KAFKA_MESSAGE_SENT_COUNT_KEY)
+        redis_key = message_helper.redis.get_key(key=DAILY_KAFKA_MESSAGE_SENT_COUNT_KEY, 
+                                                 suffix=datetime.now().date())
         remote_count = self.current.data.redis.get(redis_key)
         if remote_count is None:
             remote_count = "0"
         kafka_messages_sent = count + int(remote_count)
-        message_helper.redis.set(key=redis_key, value=kafka_messages_sent, expiryDays=1)
+        message_helper.redis.set(key=redis_key, value=kafka_messages_sent, expiry=timedelta(days=1))
+        
             
     def get_report(self):
         return self._message_report

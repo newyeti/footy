@@ -1,5 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from infra.upstash_stack import Stack
+from typing import Optional
 
 class KafkaConfig(BaseModel):
     bootstrap_servers: list[str]
@@ -16,8 +17,8 @@ class RedisConfig(BaseModel):
     password: str
     
 class Stack(BaseModel):
-    redis: RedisConfig
-    kafka: KafkaConfig
+    redis: Optional[RedisConfig] = Field(None)
+    kafka: Optional[KafkaConfig] = Field(None)
     
 class ServiceConfigDetail(BaseModel):
     filename: str
@@ -35,3 +36,4 @@ class ServiceConfig(BaseModel):
 class CliAppConfig(BaseModel):
     stacks: list[Stack]
     service: ServiceConfig
+    control: Stack
