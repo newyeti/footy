@@ -197,6 +197,13 @@ stack:
       retention_size: 268435456
       max_message_size: 1048576
       cleanup_policy: delete
+    errors:
+      name: newyeti.source.deadletter.errors.v1
+      partitions: 1
+      retention_time: 604800000
+      retention_size: 268435456
+      max_message_size: 1048576
+      cleanup_policy: delete
   connector_configuration:
     mongo.sink.teams:
         name: newyeti.mongo.football.teams.sink
@@ -206,6 +213,10 @@ stack:
           connector.class: com.mongodb.kafka.connect.MongoSinkConnector
           database: football
           topics: newyeti.source.teams.v1
+          mongo.errors.tolerance: all
+          errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+          errors.log.enable: true
+          errors.log.include.messages: true
     mongo.sink.fixtures:
       name: newyeti.mongo.football.fixtures.sink
       properties:
@@ -214,6 +225,10 @@ stack:
         connector.class: com.mongodb.kafka.connect.MongoSinkConnector
         database: football
         topics: newyeti.source.fixtures.v1
+        mongo.errors.tolerance: all
+        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.log.enable: true
+        errors.log.include.messages: true
     mongo.sink.fixture_events:
       name: newyeti.mongo.football.fixture_events.sink
       properties:
@@ -222,6 +237,10 @@ stack:
         connector.class: com.mongodb.kafka.connect.MongoSinkConnector
         database: football
         topics: newyeti.source.fixture_events.v1
+        mongo.errors.tolerance: all
+        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.log.enable: true
+        errors.log.include.messages: true
     mongo.sink.fixture_lineups:
       name: newyeti.mongo.football.fixture_lineups.sink
       properties:
@@ -230,6 +249,10 @@ stack:
         connector.class: com.mongodb.kafka.connect.MongoSinkConnector
         database: football
         topics: newyeti.source.fixture_lineups.v1
+        mongo.errors.tolerance: all
+        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.log.enable: true
+        errors.log.include.messages: true
     mongo.sink.fixture_player_stats:
       name: newyeti.mongo.football.fixture_player_stats.sink
       properties:
@@ -238,6 +261,10 @@ stack:
         connector.class: com.mongodb.kafka.connect.MongoSinkConnector
         database: football
         topics: newyeti.source.fixture_player_stats.v1
+        mongo.errors.tolerance: all
+        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.log.enable: true
+        errors.log.include.messages: true
     mongo.sink.top_scorers:
       name: newyeti.mongo.football.top_scorers.sink
       properties:
@@ -246,6 +273,10 @@ stack:
         connector.class: com.mongodb.kafka.connect.MongoSinkConnector
         database: football
         topics: newyeti.source.top_scorers.v1
+        mongo.errors.tolerance: all
+        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.log.enable: true
+        errors.log.include.messages: true
     bq.nopart.sink:
       name: newyeti.bq.nopart.football.sink
       properties:
@@ -283,50 +314,74 @@ stack:
       name: newyeti.mongo.football.teams.sink
       properties:
         collection: teams
-        connection.uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}
+        connection.uri: mongodb+srv://${MONGO_USERNAME_TEST}:${MONGO_PASSWORD_TEST}@${MONGO_HOSTNAME}
         connector.class: com.mongodb.kafka.connect.MongoSinkConnector
         database: test_football
         topics: newyeti.source.teams.v1
+        mongo.errors.tolerance: all
+        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.log.enable: true
+        errors.log.include.messages: true
     test.mongo.sink.fixtures:
       name: newyeti.mongo.football.fixtures.sink
       properties:
         collection: fixtures
-        connection.uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}
+        connection.uri: mongodb+srv://${MONGO_USERNAME_TEST}:${MONGO_PASSWORD_TEST}@${MONGO_HOSTNAME}
         connector.class: com.mongodb.kafka.connect.MongoSinkConnector
         database: test_football
         topics: newyeti.source.fixtures.v1
+        mongo.errors.tolerance: all
+        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.log.enable: true
+        errors.log.include.messages: true
     test.mongo.sink.fixture_events:
       name: newyeti.mongo.football.fixture_events.sink
       properties:
         collection: fixture_events
-        connection.uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}
+        connection.uri: mongodb+srv://${MONGO_USERNAME_TEST}:${MONGO_PASSWORD_TEST}@${MONGO_HOSTNAME}
         connector.class: com.mongodb.kafka.connect.MongoSinkConnector
         database: test_football
         topics: newyeti.source.fixture_events.v1
+        mongo.errors.tolerance: all
+        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.log.enable: true
+        errors.log.include.messages: true
     test.mongo.sink.fixture_lineups:
       name: newyeti.mongo.football.fixture_lineups.sink
       properties:
         collection: fixture_lineups
-        connection.uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}
+        connection.uri: mongodb+srv://${MONGO_USERNAME_TEST}:${MONGO_PASSWORD_TEST}@${MONGO_HOSTNAME}
         connector.class: com.mongodb.kafka.connect.MongoSinkConnector
         database: test_football
         topics: newyeti.source.fixture_lineups.v1
+        mongo.errors.tolerance: all
+        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.log.enable: true
+        errors.log.include.messages: true
     test.mongo.sink.fixture_player_stats:
       name: newyeti.mongo.football.fixture_player_stats.sink
       properties:
         collection: fixture_player_stats
-        connection.uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}
+        connection.uri: mongodb+srv://${MONGO_USERNAME_TEST}:${MONGO_PASSWORD_TEST}@${MONGO_HOSTNAME}
         connector.class: com.mongodb.kafka.connect.MongoSinkConnector
         database: test_football
         topics: newyeti.source.fixture_player_stats.v1
+        mongo.errors.tolerance: all
+        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.log.enable: true
+        errors.log.include.messages: true
     test.mongo.sink.top_scorers:
       name: newyeti.mongo.football.top_scorers.sink
       properties:
         collection: top_scorers
-        connection.uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}
+        connection.uri: mongodb+srv://${MONGO_USERNAME_TEST}:${MONGO_PASSWORD_TEST}@${MONGO_HOSTNAME}
         connector.class: com.mongodb.kafka.connect.MongoSinkConnector
         database: test_football
         topics: newyeti.source.top_scorers.v1
+        mongo.errors.tolerance: all
+        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.log.enable: true
+        errors.log.include.messages: true
     test.bq.nopart.sink:
       name: newyeti.bq.nopart.football.sink
       properties:

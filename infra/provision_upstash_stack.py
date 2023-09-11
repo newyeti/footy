@@ -21,6 +21,7 @@ from infra.upstash_stack import (Kafka, Project, Redis, Stack)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('infra')
 
+
 def process_kafka_cluster(session: aiohttp.ClientSession,
                             base_url: str, 
                             username: str, 
@@ -42,6 +43,7 @@ def process_kafka_cluster(session: aiohttp.ClientSession,
                          logging=logging)))
     
     return cluster_tasks
+    
     
 def process_kafka_topic_and_connector(session: aiohttp.ClientSession,
                             base_url: str, 
@@ -91,6 +93,7 @@ def process_kafka_topic_and_connector(session: aiohttp.ClientSession,
     
     return (topic_tasks, connector_tasks)
 
+
 def process_redis_database(session: aiohttp.ClientSession, 
                            username: str,
                            password: str,
@@ -109,7 +112,8 @@ def process_redis_database(session: aiohttp.ClientSession,
                          data=json.dumps(redis.database.properties),
                          logging=logging)))
     return task
-        
+
+     
 async def find_existing_stack(session: aiohttp.ClientSession, base_url: str, projects: list[Project]) -> dict:
     get_cluster_tasks = []
     get_database_tasks = []
@@ -128,7 +132,10 @@ async def find_existing_stack(session: aiohttp.ClientSession, base_url: str, pro
         
     cluster_results = await asyncio.gather(*get_cluster_tasks)
     database_results = await asyncio.gather(*get_database_tasks)
-
+    
+    logger.info(f"Cluster Response: {cluster_results}")
+    logger.info(f"Redis Response: {database_results}")
+    
     for project, cluster_result, database_result in zip(projects, cluster_results, database_results):
         cluster_id = ""
         database_id = ""
@@ -142,6 +149,7 @@ async def find_existing_stack(session: aiohttp.ClientSession, base_url: str, pro
         available_databases[project.redis.database.name] = database_id
     
     return (available_clusters, available_databases)
+    
     
 async def create_kafka_clusters(tasks: list, availabe_clusters: dict) -> None:
     try:
@@ -176,6 +184,7 @@ async def create_kafka_topics(tasks: list):
         
     except aiohttp.ClientError as e:
         logging.error(e)
+ 
     
 async def create_kafka_connectors(tasks: list):
     try:
@@ -189,6 +198,7 @@ async def create_kafka_connectors(tasks: list):
         
     except aiohttp.ClientError as e:
         logging.error(e)
+
 
 async def create_redis_databases(tasks: list, availabe_databases: dict):
     try:
@@ -208,6 +218,7 @@ async def create_redis_databases(tasks: list, availabe_databases: dict):
         logging.info("Creating Redis Database - completed")
     except aiohttp.ClientError as e:
         logging.error(e)
+
 
 async def main():
     parsed_yaml = load_config('infra/upstash_stack.yaml')
@@ -276,7 +287,8 @@ async def main():
             logging.info("Finishing creating stack")    
     except Exception as e:
         logging.error(e)
-    
+        
+        
 if __name__ == "__main__":
     start = time.time()
     asyncio.run(main())

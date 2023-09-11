@@ -51,5 +51,5 @@ async def test_main():
             redis_control.redis.delete(redis_key)
         
         
-# if __name__ == "__main__":
-#     asyncio.run(test_main())
+if __name__ == "__main__":
+    asyncio.run(test_main())
