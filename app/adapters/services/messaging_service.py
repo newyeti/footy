@@ -10,7 +10,8 @@ from app.adapters.services.redis_service import RedisSingleton
 
 logger = logging.getLogger(__name__)
 
-MAX_KAFKA_MESSAGE_LIMIT = 10000
+DEFAULT_KAFKA_DAILY_LIMIT = 10000
+DEFAULT_REDIS_DAILY_LIMIT = 10000
 DAILY_KAFKA_MESSAGE_SENT_COUNT_KEY = "kafka_messages_sent"
 
 class MessageHelper:
@@ -28,16 +29,21 @@ class MessageService:
     _counter = 0
     
     def __init__(self, message_helpers: LinkedList[MessageHelper],
-                 batch_size: int = 10) -> None:
+                 batch_size: int = 10,
+                 kafka_daily_limit: int = DEFAULT_KAFKA_DAILY_LIMIT,
+                 redis_daily_limit: int = DEFAULT_REDIS_DAILY_LIMIT) -> None:
         self.message_helpers = message_helpers
         self.current = message_helpers.head
         self.batch_size=batch_size
+        self.kafka_daily_limit = kafka_daily_limit
+        
+        self.redis_daily_limit = redis_daily_limit
         self.messages : list[MessageEvent] = []
         self._counter = self.get_kafka_message_count(self.current.data)
         
     
     async def _is_kafka_limit_reached(self, data: MessageHelper):
-        if self._counter < MAX_KAFKA_MESSAGE_LIMIT:
+        if self._counter < self.kafka_daily_limit:
             return False
         else:
             self._counter = 0

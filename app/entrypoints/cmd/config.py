@@ -32,8 +32,15 @@ class ServiceConfig(BaseModel):
     fixture_lineups: ServiceConfigDetail
     fixture_player_stats: ServiceConfigDetail
     top_scorers: ServiceConfigDetail
+
+class MessageConfig(BaseModel):
+    batch_size: int
+    kafka_daily_limit: int
+    kafka_per_second_limit: int
+    redis_daily_limit: int
     
 class CliAppConfig(BaseModel):
     stacks: list[Stack]
     service: ServiceConfig
     control: Stack
+    message: MessageConfig

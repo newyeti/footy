@@ -44,7 +44,11 @@ def get_message_service(app_config: CliAppConfig) -> messaging_service.MessageSe
         }
         message_helper = messaging_service.MessageHelper(**data_dict)
         messaga_helpers.append(message_helper)
-    return messaging_service.MessageService(message_helpers=messaga_helpers, batch_size=50)
+    return messaging_service.MessageService(message_helpers=messaga_helpers, 
+                                            batch_size=app_config.message.batch_size,
+                                            kafka_daily_limit=app_config.message.kafka_daily_limit,
+                                            redis_daily_limit=app_config.message.redis_daily_limit)
+
 
 async def run(app_config: CliAppConfig, services: list[str], service: str, season: int, location: str):
     redis_control = redis_service.RedisSingleton(

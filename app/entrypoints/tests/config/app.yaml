@@ -14,4 +14,9 @@ app:
       host: ${oc.env:NEWYETI0_REDIS_HOST}
       port: ${oc.env:NEWYETI0_REDIS_PORT}
       password: ${oc.env:NEWYETI0_REDIS_PASSWORD}
+  message:
+    batch_size: 10
+    kafka_daily_limit: 10000
+    kafka_per_second_limit: 100
+    redis_daily_limit: 10000
   
