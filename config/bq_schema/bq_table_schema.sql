@@ -124,3 +124,10 @@ CREATE TABLE `newyeti.football.fixtures`
 )
 PARTITION BY TIMESTAMP_TRUNC(event_date, YEAR)
 CLUSTER BY season, league_id;
+
+ALTER TABLE `newyeti.football.teams` ADD PRIMARY KEY (season, league_id, team_id) NOT ENFORCED;
+ALTER TABLE `newyeti.football.fixtures` ADD PRIMARY KEY (season, league_id, fixture_id) NOT ENFORCED;
+ALTER TABLE `newyeti.football.fixture_events` ADD PRIMARY KEY (season, league_id, fixture_id) NOT ENFORCED;
+ALTER TABLE `newyeti.football.fixture_lineups` ADD PRIMARY KEY (season, league_id, fixture_id, team_id) NOT ENFORCED;
+ALTER TABLE `newyeti.football.fixture_player_stats` ADD PRIMARY KEY (season, league_id, fixture_id, team_id, player_id, event_date) NOT ENFORCED;
+ALTER TABLE `newyeti.football.top_scorers` ADD PRIMARY KEY (season, league_id, player_id) NOT ENFORCED;
