@@ -46,8 +46,7 @@ def get_message_service(app_config: CliAppConfig) -> messaging_service.MessageSe
         messaga_helpers.append(message_helper)
     return messaging_service.MessageService(message_helpers=messaga_helpers, batch_size=50)
 
-async def run(config_directory: str, services: list[str], service: str, season: int, location: str):
-    app_config = load_app_config(config_directory, "app")
+async def run(app_config: CliAppConfig, services: list[str], service: str, season: int, location: str):
     redis_control = redis_service.RedisSingleton(
         name=app_config.control.redis.client_id,
         redis_config=app_config.control.redis)
@@ -72,6 +71,7 @@ async def run(config_directory: str, services: list[str], service: str, season: 
     
     report = message_service.get_report()
     
+    # store sent message count in redis database
     for key, value in report.items():
         redis_key = redis_control.get_key(prefix=str(season), key=key, suffix=None)
         redis_control.set(key=redis_key, value=value, expiry=timedelta(days=7))
@@ -97,8 +97,9 @@ async def main():
         raise FileNotFoundError(f"File {location} not found.")
     
     config_directory = f"{current_directory}/config"
+    app_config = load_app_config(config_directory, "app")
     
-    report = await run(config_directory=config_directory, 
+    report = await run(app_config=app_config, 
               services=services, 
               service=service, 
               season=season, 
