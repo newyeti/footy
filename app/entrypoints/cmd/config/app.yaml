@@ -11,10 +11,10 @@ app:
   - ${newyeti-3}
   control:
     redis:
-      client_id: ${oc.env:NEWYETI_CLIENT_ID}-redis
-      host: ${oc.env:NEWYETI-CONTROL_REDIS_HOST}
-      port: ${oc.env:NEWYETI-CONTROL_REDIS_PORT}
-      password: ${oc.env:NEWYETI-CONTROL_REDIS_PASSWORD}
+      client_id: ${oc.env:NEWYETI_CONTROL_CLIENT_ID}-redis
+      host: ${oc.env:NEWYETI_CONTROL_REDIS_HOST}
+      port: ${oc.env:NEWYETI_CONTROL_REDIS_PORT}
+      password: ${oc.env:NEWYETI_CONTROL_REDIS_PASSWORD}
   service: ${service}
   message:
     batch_size: 10

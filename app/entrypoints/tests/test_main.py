@@ -4,6 +4,7 @@ import sys
 
 import os.path
 import pytest
+from hydra.core.global_hydra import GlobalHydra
 
 # Add the parent directory (app) to sys.path
 current_directory =  os.path.abspath(os.path.dirname(__file__))
@@ -16,6 +17,7 @@ from app.adapters.services import redis_service
 
 @pytest.mark.asyncio
 async def test_main():
+    GlobalHydra.instance().clear()
     current_directory =  os.path.abspath(os.path.dirname(__file__))
     config_directory = os.path.abspath(os.path.join(current_directory, "config"))
     data_directory = os.path.abspath(os.path.join(current_directory, "data/2022"))
@@ -49,5 +51,5 @@ async def test_main():
             redis_control.redis.delete(redis_key)
         
         
-if __name__ == "__main__":
-    asyncio.run(test_main())
+# if __name__ == "__main__":
+#     asyncio.run(test_main())

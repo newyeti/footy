@@ -51,6 +51,8 @@ def get_message_service(app_config: CliAppConfig) -> messaging_service.MessageSe
 
 
 async def run(app_config: CliAppConfig, services: list[str], service: str, season: int, location: str):
+    """Runs the import task asynchronously"""
+    
     redis_control = redis_service.RedisSingleton(
         name=app_config.control.redis.client_id,
         redis_config=app_config.control.redis)
@@ -110,6 +112,7 @@ async def main():
               location=location)
     
     logger.info(f"Message report: {report}")    
+    
     
 if __name__ == "__main__":
     current_time = time.time()
