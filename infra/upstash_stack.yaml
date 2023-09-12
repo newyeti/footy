@@ -20,6 +20,7 @@ stack:
           - fixture_lineups
           - fixture_player_stats
           - top_scorers
+          - deadletterqueue
           connectors:
           - mongo.sink.teams
           - mongo.sink.fixtures
@@ -58,6 +59,7 @@ stack:
           - fixture_lineups
           - fixture_player_stats
           - top_scorers
+          - deadletterqueue
           connectors:
           - mongo.sink.teams
           - mongo.sink.fixtures
@@ -96,6 +98,7 @@ stack:
           - fixture_lineups
           - fixture_player_stats
           - top_scorers
+          - deadletterqueue
           connectors:
           - mongo.sink.teams
           - mongo.sink.fixtures
@@ -171,21 +174,21 @@ stack:
       cleanup_policy: delete
     fixture_events:
       name: newyeti.source.fixture_events.v1
-      partitions: 2
+      partitions: 1
       retention_time: 604800000
       retention_size: 268435456
       max_message_size: 1048576
       cleanup_policy: delete
     fixture_lineups:
       name: newyeti.source.fixture_lineups.v1
-      partitions: 2
+      partitions: 1
       retention_time: 604800000
       retention_size: 268435456
       max_message_size: 1048576
       cleanup_policy: delete
     fixture_player_stats:
       name: newyeti.source.fixture_player_stats.v1
-      partitions: 2
+      partitions: 1
       retention_time: 604800000
       retention_size: 268435456
       max_message_size: 1048576
@@ -197,8 +200,8 @@ stack:
       retention_size: 268435456
       max_message_size: 1048576
       cleanup_policy: delete
-    errors:
-      name: newyeti.source.deadletter.errors.v1
+    deadletterqueue:
+      name: newyeti.source.errors.dlq.v1
       partitions: 1
       retention_time: 604800000
       retention_size: 268435456
@@ -214,7 +217,7 @@ stack:
           database: football
           topics: newyeti.source.teams.v1
           mongo.errors.tolerance: all
-          errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+          errors.deadletterqueue.topic.name: newyeti.source.errors.dlq.v1
           errors.log.enable: true
           errors.log.include.messages: true
     mongo.sink.fixtures:
@@ -226,7 +229,7 @@ stack:
         database: football
         topics: newyeti.source.fixtures.v1
         mongo.errors.tolerance: all
-        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.deadletterqueue.topic.name: newyeti.source.errors.dlq.v1
         errors.log.enable: true
         errors.log.include.messages: true
     mongo.sink.fixture_events:
@@ -238,7 +241,7 @@ stack:
         database: football
         topics: newyeti.source.fixture_events.v1
         mongo.errors.tolerance: all
-        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.deadletterqueue.topic.name: newyeti.source.errors.dlq.v1
         errors.log.enable: true
         errors.log.include.messages: true
     mongo.sink.fixture_lineups:
@@ -250,7 +253,7 @@ stack:
         database: football
         topics: newyeti.source.fixture_lineups.v1
         mongo.errors.tolerance: all
-        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.deadletterqueue.topic.name: newyeti.source.errors.dlq.v1
         errors.log.enable: true
         errors.log.include.messages: true
     mongo.sink.fixture_player_stats:
@@ -262,7 +265,7 @@ stack:
         database: football
         topics: newyeti.source.fixture_player_stats.v1
         mongo.errors.tolerance: all
-        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.deadletterqueue.topic.name: newyeti.source.errors.dlq.v1
         errors.log.enable: true
         errors.log.include.messages: true
     mongo.sink.top_scorers:
@@ -274,7 +277,7 @@ stack:
         database: football
         topics: newyeti.source.top_scorers.v1
         mongo.errors.tolerance: all
-        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.deadletterqueue.topic.name: newyeti.source.errors.dlq.v1
         errors.log.enable: true
         errors.log.include.messages: true
     bq.nopart.sink:
@@ -292,6 +295,11 @@ stack:
         topics: newyeti.source.teams.v1, newyeti.source.top-scorers.v1
         value.converter: org.apache.kafka.connect.json.JsonConverter
         value.converter.schemas.enable: false
+        errors.deadletterqueue.topic.name: newyeti.source.errors.dlq.v1
+        errors.log.enable: true
+        errors.log.include.messages: true
+        bigQueryRetry: 3
+        bigQueryRetryWait: 60000
     bq.part.sink:
       name: newyeti.bq.part.football.sink
       properties:
@@ -309,6 +317,11 @@ stack:
         topics: newyeti.source.fixtures.v1,newyeti.source.fixture-events.v1,newyeti.source.fixture-player-stats.v1,newyeti.source.fixture-lineups.v1
         value.converter: org.apache.kafka.connect.json.JsonConverter
         value.converter.schemas.enable: false
+        errors.deadletterqueue.topic.name: newyeti.source.errors.dlq.v1
+        errors.log.enable: true
+        errors.log.include.messages: true
+        bigQueryRetry: 3
+        bigQueryRetryWait: 60000
     # Test connectors
     test.mongo.sink.teams:
       name: newyeti.mongo.football.teams.sink
@@ -319,7 +332,7 @@ stack:
         database: test_football
         topics: newyeti.source.teams.v1
         mongo.errors.tolerance: all
-        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.deadletterqueue.topic.name: newyeti.source.errors.dlq.v1
         errors.log.enable: true
         errors.log.include.messages: true
     test.mongo.sink.fixtures:
@@ -331,7 +344,7 @@ stack:
         database: test_football
         topics: newyeti.source.fixtures.v1
         mongo.errors.tolerance: all
-        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.deadletterqueue.topic.name: newyeti.source.errors.dlq.v1
         errors.log.enable: true
         errors.log.include.messages: true
     test.mongo.sink.fixture_events:
@@ -343,7 +356,7 @@ stack:
         database: test_football
         topics: newyeti.source.fixture_events.v1
         mongo.errors.tolerance: all
-        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.deadletterqueue.topic.name: newyeti.source.errors.dlq.v1
         errors.log.enable: true
         errors.log.include.messages: true
     test.mongo.sink.fixture_lineups:
@@ -355,7 +368,7 @@ stack:
         database: test_football
         topics: newyeti.source.fixture_lineups.v1
         mongo.errors.tolerance: all
-        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.deadletterqueue.topic.name: newyeti.source.errors.dlq.v1
         errors.log.enable: true
         errors.log.include.messages: true
     test.mongo.sink.fixture_player_stats:
@@ -367,7 +380,7 @@ stack:
         database: test_football
         topics: newyeti.source.fixture_player_stats.v1
         mongo.errors.tolerance: all
-        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.deadletterqueue.topic.name: newyeti.source.errors.dlq.v1
         errors.log.enable: true
         errors.log.include.messages: true
     test.mongo.sink.top_scorers:
@@ -379,7 +392,7 @@ stack:
         database: test_football
         topics: newyeti.source.top_scorers.v1
         mongo.errors.tolerance: all
-        errors.deadletterqueue.topic.name: newyeti.source.deadletter.errors.v1
+        errors.deadletterqueue.topic.name: newyeti.source.errors.dlq.v1
         errors.log.enable: true
         errors.log.include.messages: true
     test.bq.nopart.sink:
@@ -397,6 +410,8 @@ stack:
         topics: newyeti.source.teams.v1, newyeti.source.top_scorers.v1
         value.converter: org.apache.kafka.connect.json.JsonConverter
         value.converter.schemas.enable: false
+        bigQueryRetry: 3
+        bigQueryRetryWait: 60000
     test.bq.part.sink:
       name: newyeti.bq.part.football.sink
       properties:
@@ -414,3 +429,5 @@ stack:
         topics: newyeti.source.fixtures.v1,newyeti.source.fixture_events.v1,newyeti.source.fixture_player_stats.v1,newyeti.source.fixture_lineups.v1
         value.converter: org.apache.kafka.connect.json.JsonConverter
         value.converter.schemas.enable: false
+        bigQueryRetry: 3
+        bigQueryRetryWait: 60000

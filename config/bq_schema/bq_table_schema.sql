@@ -12,6 +12,7 @@ CREATE TABLE `newyeti.football.fixture_player_stats`
   position STRING,
   rating FLOAT64,
   minutes_played INT64,
+  caption STRING,
   substitute INT64,
   offsides INT64,
   shots STRUCT<total INT64, `on` INT64>,
