@@ -80,6 +80,7 @@ class MessageService:
     
         
     async def flush(self, messages):
+       logger.info(f"Sending new batch of {len(messages)} messages.")
        await self.send_message_async(messages=messages)
     
        

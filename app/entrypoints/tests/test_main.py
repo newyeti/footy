@@ -36,6 +36,8 @@ async def test_main():
         season=2022,
         location=data_directory)
     
+    print(f"Message report: {report}") 
+    
     assert report is not None
     
     try:

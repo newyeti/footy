@@ -74,13 +74,13 @@ async def run(app_config: CliAppConfig, services: list[str], service: str, seaso
         await message_service.flush(message_service.messages)
     except ClientException as e:
         logger.error(e)
-    
-    report = message_service.get_report()
-    
-    # store sent message count in redis database
-    for key, value in report.items():
-        redis_key = redis_control.get_key(prefix=str(season), key=key, suffix=None)
-        redis_control.set(key=redis_key, value=value, expiry=timedelta(days=7))
+    finally:
+        report = message_service.get_report()
+        
+        # store sent message count in redis database
+        for key, value in report.items():
+            redis_key = redis_control.get_key(prefix=str(season), key=key, suffix=None)
+            redis_control.set(key=redis_key, value=value, expiry=timedelta(days=7))
     
     return report
     
