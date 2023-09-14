@@ -17,7 +17,7 @@ app:
       password: ${oc.env:NEWYETI_CONTROL_REDIS_PASSWORD}
   service: ${service}
   message:
-    batch_size: 10
+    batch_size: 50
     kafka_daily_limit: 10000
     kafka_per_second_limit: 100
     redis_daily_limit: 10000
