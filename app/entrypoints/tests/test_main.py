@@ -50,7 +50,7 @@ async def test_main():
     finally:
         for key in report.keys():
             redis_key = redis_control.get_key(prefix=season, key=key, suffix=None)
-            redis_control.redis.delete(redis_key)
+            redis_control.redis_client.delete(redis_key)
         
         
 if __name__ == "__main__":

@@ -111,7 +111,7 @@ async def main():
               season=season, 
               location=location)
     
-    logger.info(f"Message report: {report}")    
+    logger.info(f"Message report: {report}")
     
     
 if __name__ == "__main__":

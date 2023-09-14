@@ -15,6 +15,7 @@ import asyncio
 import logging
 
 logger = logging.getLogger(__name__)
+LEAGUE_ID_CONVERSION_HASH_NAME = "LEAGUE_ID_CONVERSION_HASH"
 
 class Switch:
     """Executes the date import service and sends data to kafka topic"""
@@ -33,7 +34,15 @@ class Switch:
             "fixture_player_stats": self._fixture_player_stats,
             "top_scorers": self._top_scorers,
         }
-        
+        hash_data = db.redis_client.hgetall(name=LEAGUE_ID_CONVERSION_HASH_NAME)
+        self._league_id_conversion = {}
+        for field, value in hash_data.items():
+            key = int(field.decode('utf-8'))
+            val = int(value.decode('utf-8'))
+            self._league_id_conversion[key] = val
+        logger.info(f"League ID conversion hash: {self._league_id_conversion}")
+            
+
     async def execute(self, service: str, season: int, loc: str) -> None:
         if service in self._services:
             logger.info(f"Executing service: '{service}'")
@@ -60,6 +69,7 @@ class Switch:
             if 0 <= index < len(teams):
                 team = teams[index]
                 team.season = season
+                team.league_id = self._get_league_id(team.league_id)
                 data_dict = {
                     "topic": topic,
                     "message": convert_to_json(team),
@@ -96,6 +106,7 @@ class Switch:
             if 0 <= index < len(fixtures):
                 fixture = fixtures[index]
                 fixture.season = season
+                fixture.league_id = self._get_league_id(fixture.league_id)
                 data_dict = {
                     "topic": topic,
                     "message": convert_to_json(fixture),
@@ -132,6 +143,7 @@ class Switch:
             if 0 <= index < len(events):
                 event = events[index]
                 event.season = season
+                event.league_id = self._get_league_id(event.league_id)
                 if event.fixture_id in fixture_map:
                     event.event_date = fixture_map[event.fixture_id]
                 
@@ -172,6 +184,7 @@ class Switch:
             if 0 <= index < len(lineups):
                 lineup = lineups[index]
                 lineup.season = season
+                lineup.league_id = self._get_league_id(lineup.league_id)
                 if lineup.fixture_id in fixture_map:
                     lineup.event_date = fixture_map[lineup.fixture_id]
                     
@@ -206,6 +219,7 @@ class Switch:
             if 0 <= index < len(player_stats):
                 stat = player_stats[index]
                 stat.season = season
+                stat.league_id = self._get_league_id(stat.league_id)
                 data_dict = {
                     "topic": topic,
                     "message": convert_to_json(stat),
@@ -235,6 +249,7 @@ class Switch:
             if 0 <= index < len(top_scorers):
                 ts = top_scorers[index]
                 ts.season = season
+                ts.league_id = self._get_league_id(ts.league_id)
                 data_dict = {
                     "topic": topic,
                     "message": convert_to_json(ts),
@@ -262,3 +277,9 @@ class Switch:
             message_sent = 0
             
         return message_sent
+    
+    
+    def _get_league_id(self, league_id: int):
+        if league_id in self._league_id_conversion:
+            return self._league_id_conversion[league_id]
+        return league_id

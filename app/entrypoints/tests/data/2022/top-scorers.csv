@@ -1,21 +1,21 @@
 leagueid,playerid,playername,firstname,lastname,position,nationality,teamid,teamname,games.appearences,games.minutesplayed,goals.total,goals.assists,goals.conceded,goals.saves,shots.total,shots.on,penalty.won,penalty.commited,cards.yellow,cards.secondyellow,cards.red
-39,1100,E. Haaland,Erling,Braut Haaland,Attacker,Norway,50,Manchester City,35,2779,36,8,0,0,107,60,0,0,0,0,0
-39,184,H. Kane,Harry Edward,Kane,Attacker,England,47,Tottenham,38,3408,30,3,0,0,100,63,0,0,0,0,0
-39,19974,I. Toney,Ivan Benjamin Elijah,Toney,Attacker,England,55,Brentford,33,2955,20,4,0,0,78,42,0,0,0,0,0
-39,306,Mohamed Salah,Mohamed,Salah Hamed Mahrous Ghaly,Attacker,Egypt,40,Liverpool,38,3297,19,12,0,0,97,47,0,0,0,0,0
-39,2939,C. Wilson,Callum Eddie Graham,Wilson,Attacker,England,34,Newcastle,31,1885,18,5,0,0,63,35,0,0,0,0,0
-39,909,M. Rashford,Marcus,Rashford,Attacker,England,33,Manchester United,35,2889,17,5,0,0,81,50,0,0,0,0,0
-39,37127,M. Ødegaard,Martin,Ødegaard,Midfielder,Norway,42,Arsenal,37,3149,15,7,0,0,60,33,0,0,0,0,0
-39,127769,Gabriel Martinelli,Gabriel Teodoro,Martinelli Silva,Attacker,Brazil,42,Arsenal,36,2806,15,5,0,0,55,32,0,0,0,0,0
-39,19366,O. Watkins,Oliver George Arthur,Watkins,Attacker,England,66,Aston Villa,37,3136,15,6,0,0,70,47,0,0,0,0,0
-39,1460,B. Saka,Bukayo Ayoyinka Temidayo,Saka,Midfielder,England,42,Arsenal,38,3194,14,11,0,0,60,32,0,0,0,0,0
-39,2825,A. Mitrović,Aleksandar,Mitrović,Attacker,Serbia,36,Fulham,24,2015,14,1,0,0,76,35,0,0,0,0,0
-39,18778,H. Barnes,Harvey Lewis,Barnes,Midfielder,England,46,Leicester,34,2720,13,1,0,0,54,34,0,0,0,0,0
-39,935,Rodrigo,Rodrigo,Moreno Machado,Attacker,Spain,63,Leeds,31,1943,13,1,0,0,47,27,0,0,0,0,0
-39,631,P. Foden,Philip Walter,Foden,Midfielder,England,50,Manchester City,32,1844,11,5,0,0,33,22,0,0,0,0,0
-39,302,Roberto Firmino,Roberto Firmino,Barbosa de Oliveira,Attacker,Brazil,40,Liverpool,25,1211,11,4,0,0,31,25,0,0,0,0,0
-39,2507,M. Almirón,Miguel Ángel,Almirón Rejala,Midfielder,Paraguay,34,Newcastle,34,2508,11,2,0,0,44,21,0,0,0,0,0
-39,643,Gabriel Jesus,Gabriel Fernando,de Jesus,Attacker,Brazil,42,Arsenal,26,2075,11,6,0,0,57,32,0,0,0,0,0
-39,186,Son Heung-Min,Heung-Min,Son,Attacker,Korea Republic,47,Tottenham,36,2899,10,6,0,0,56,40,0,0,0,0,0
-39,8598,T. Awoniyi,Taiwo Micheal,Awoniyi,Attacker,Nigeria,65,Nottingham Forest,27,1411,10,1,0,0,32,15,0,0,0,0,0
-39,18784,J. Maddison,James Daniel,Maddison,Midfielder,England,46,Leicester,30,2485,10,9,0,0,53,29,0,0,0,0,0
+4335,1100,E. Haaland,Erling,Braut Haaland,Attacker,Norway,50,Manchester City,35,2779,36,8,0,0,107,60,0,0,0,0,0
+4335,184,H. Kane,Harry Edward,Kane,Attacker,England,47,Tottenham,38,3408,30,3,0,0,100,63,0,0,0,0,0
+4335,19974,I. Toney,Ivan Benjamin Elijah,Toney,Attacker,England,55,Brentford,33,2955,20,4,0,0,78,42,0,0,0,0,0
+4335,306,Mohamed Salah,Mohamed,Salah Hamed Mahrous Ghaly,Attacker,Egypt,40,Liverpool,38,3297,19,12,0,0,97,47,0,0,0,0,0
+4335,294335,C. Wilson,Callum Eddie Graham,Wilson,Attacker,England,34,Newcastle,31,1885,18,5,0,0,63,35,0,0,0,0,0
+4335,909,M. Rashford,Marcus,Rashford,Attacker,England,33,Manchester United,35,2889,17,5,0,0,81,50,0,0,0,0,0
+4335,37127,M. Ødegaard,Martin,Ødegaard,Midfielder,Norway,42,Arsenal,37,3149,15,7,0,0,60,33,0,0,0,0,0
+4335,127769,Gabriel Martinelli,Gabriel Teodoro,Martinelli Silva,Attacker,Brazil,42,Arsenal,36,2806,15,5,0,0,55,32,0,0,0,0,0
+4335,19366,O. Watkins,Oliver George Arthur,Watkins,Attacker,England,66,Aston Villa,37,3136,15,6,0,0,70,47,0,0,0,0,0
+4335,1460,B. Saka,Bukayo Ayoyinka Temidayo,Saka,Midfielder,England,42,Arsenal,38,3194,14,11,0,0,60,32,0,0,0,0,0
+4335,2825,A. Mitrović,Aleksandar,Mitrović,Attacker,Serbia,36,Fulham,24,2015,14,1,0,0,76,35,0,0,0,0,0
+4335,18778,H. Barnes,Harvey Lewis,Barnes,Midfielder,England,46,Leicester,34,2720,13,1,0,0,54,34,0,0,0,0,0
+4335,935,Rodrigo,Rodrigo,Moreno Machado,Attacker,Spain,63,Leeds,31,1943,13,1,0,0,47,27,0,0,0,0,0
+4335,631,P. Foden,Philip Walter,Foden,Midfielder,England,50,Manchester City,32,1844,11,5,0,0,33,22,0,0,0,0,0
+4335,302,Roberto Firmino,Roberto Firmino,Barbosa de Oliveira,Attacker,Brazil,40,Liverpool,25,1211,11,4,0,0,31,25,0,0,0,0,0
+4335,2507,M. Almirón,Miguel Ángel,Almirón Rejala,Midfielder,Paraguay,34,Newcastle,34,2508,11,2,0,0,44,21,0,0,0,0,0
+4335,643,Gabriel Jesus,Gabriel Fernando,de Jesus,Attacker,Brazil,42,Arsenal,26,2075,11,6,0,0,57,32,0,0,0,0,0
+4335,186,Son Heung-Min,Heung-Min,Son,Attacker,Korea Republic,47,Tottenham,36,2899,10,6,0,0,56,40,0,0,0,0,0
+4335,8598,T. Awoniyi,Taiwo Micheal,Awoniyi,Attacker,Nigeria,65,Nottingham Forest,27,1411,10,1,0,0,32,15,0,0,0,0,0
+4335,18784,J. Maddison,James Daniel,Maddison,Midfielder,England,46,Leicester,30,2485,10,9,0,0,53,29,0,0,0,0,0
