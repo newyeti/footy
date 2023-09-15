@@ -24,7 +24,7 @@ class FixturePlayerStatDataReader(DataReader):
             "rating:": "float",
             "minutes_played": "int32",
             "caption": "string[pyarrow]",
-            "substitute": "int32",
+            "substitute": "bool",
             "offsides": "int32",
             "shots_total": "int32",
             "shots_on": "int32",
@@ -76,8 +76,11 @@ class FixturePlayerStatDataReader(DataReader):
                 formatted_date = datetime_obj.strftime('%Y-%m-%dT%H:%M:%S+00:00')
             
             rating = row['rating']
-            if row['rating'] == "":
+            substitute = row['substitute']
+            if type(row['rating'] != type(0.0)):
                 rating = 0.0
+            if type(row['substitute']) != type(0):
+                substitute = 0
             
             fixture_player_stat_data = {
                 "league_id": row['league_id'],
@@ -92,7 +95,7 @@ class FixturePlayerStatDataReader(DataReader):
                 "rating": rating,
                 "minutes_played": row['minutes_played'],
                 "caption": row['caption'],
-                "substitute": row['substitute'],
+                "substitute": substitute,
                 "offsides": row['offsides'],
                 "shots": {
                     "total": row['shots_total'],
@@ -144,4 +147,5 @@ class FixturePlayerStatDataReader(DataReader):
         
         csv_service = CsvDataService()
         dask_dataframe =  csv_service.read_file(self.file, **csv_kwargs)
+        dask_dataframe[12] = dask_dataframe[12].fillna(False)
         return csv_service.process_dataframe(dask_dataframe, parse_row)
