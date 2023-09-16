@@ -55,7 +55,13 @@ class Switch:
         file=loc+"/"+self._service_config.teams.filename
         topic = self._service_config.teams.topic
         data_reader = TeamDataReader(file=file)
-        teams = data_reader.read()
+        
+        try:
+            teams = data_reader.read()
+        except ValueError as e:
+            logger.error(f"Unable to read file {file} because {e}")
+            return
+        
         message_sent = self._message_sent_already(season=season, key=topic)
         if message_sent > len(teams):
             logger.info(f"All messages already sent to topic {topic} for season {season}")
@@ -83,7 +89,12 @@ class Switch:
         logger.debug(f"Loading find_fixtures - starting")
         file=loc+"/"+self._service_config.fixtures.filename
         data_reader = FixtureDataReader(file=file)
-        fixtures = data_reader.read()
+        try:
+            fixtures = data_reader.read()
+        except ValueError as e:
+            logger.error(f"Unable to read file {file} because {e}")
+            return []
+    
         logger.debug(f"Loading find_fixtures - completed")
         
         for fixture in fixtures:
@@ -129,7 +140,12 @@ class Switch:
         fixture_map = self._fixture_event_date_mapper(fixtures=fixtures)
         file=loc+"/"+self._service_config.fixture_events.filename
         data_reader = FixtureEventDataReader(file=file)
-        events = data_reader.read()
+        try:
+            events = data_reader.read()
+        except ValueError as e:
+            logger.error(f"Unable to read file {file} because {e}")
+            return
+    
         topic = self._service_config.fixture_events.topic
         message_sent = self._message_sent_already(season=season, 
                                                     key=topic)
@@ -170,8 +186,13 @@ class Switch:
         file=loc+"/"+self._service_config.fixture_lineups.filename
         topic = self._service_config.fixture_lineups.topic
         data_reader = FixtureLineDataReader(file=file)
-        lineups = data_reader.read()
         
+        try:
+            lineups = data_reader.read()
+        except ValueError as e:
+            logger.error(f"Unable to read file {file} because {e}")
+            return
+         
         message_sent = self._message_sent_already(season=season, 
                                                     key=topic)
         if message_sent > len(lineups):
@@ -204,7 +225,13 @@ class Switch:
         file=loc+"/"+self._service_config.fixture_player_stats.filename
         topic = self._service_config.fixture_player_stats.topic
         data_reader = FixturePlayerStatDataReader(file=file)
-        player_stats = data_reader.read()
+        
+        try:
+            player_stats = data_reader.read()
+        except ValueError as e:
+            logger.error(f"Unable to read file {file} because {e}")
+            return
+        
         logger.debug(f"Loading fixture_player_stats - completed")
         
         message_sent = self._message_sent_already(season=season, 
@@ -234,7 +261,13 @@ class Switch:
         file = loc + "/" + self._service_config.top_scorers.filename
         topic = self._service_config.top_scorers.topic
         data_reader = TopScorerDataReader(file=file)
-        top_scorers = data_reader.read()
+        
+        try:    
+            top_scorers = data_reader.read()
+        except ValueError as e:
+            logger.error(f"Unable to read file {file} because {e}")
+            return
+        
         logger.debug(f"Loading top_scorers - completed")
         
         message_sent = self._message_sent_already(season=season, 
