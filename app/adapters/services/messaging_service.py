@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_KAFKA_DAILY_LIMIT = 10000
 DEFAULT_REDIS_DAILY_LIMIT = 10000
+DEFAULT_KEY_EXPIRY_IN_DAYS = 1
 DAILY_KAFKA_MESSAGE_SENT_COUNT_KEY = "kafka_messages_sent"
 
 class MessageHelper:
@@ -31,13 +32,14 @@ class MessageService:
     def __init__(self, message_helpers: LinkedList[MessageHelper],
                  batch_size: int = 10,
                  kafka_daily_limit: int = DEFAULT_KAFKA_DAILY_LIMIT,
-                 redis_daily_limit: int = DEFAULT_REDIS_DAILY_LIMIT) -> None:
+                 redis_daily_limit: int = DEFAULT_REDIS_DAILY_LIMIT,
+                 key_expiry_in_days: int = DEFAULT_KEY_EXPIRY_IN_DAYS) -> None:
         self.message_helpers = message_helpers
         self.current = message_helpers.head
         self.batch_size=batch_size
         self.kafka_daily_limit = kafka_daily_limit
-        
         self.redis_daily_limit = redis_daily_limit
+        self.key_expiry_in_days = key_expiry_in_days
         self.messages : list[MessageEvent] = []
         self._counter = self.get_kafka_message_count(self.current.data)
         
@@ -114,7 +116,7 @@ class MessageService:
         kafka_messages_sent = self.current.data.redis.get(redis_key)
         if kafka_messages_sent is None:
             kafka_messages_sent = 0
-            message_helper.redis.set(redis_key, kafka_messages_sent, timedelta(days=1))
+            message_helper.redis.set(redis_key, kafka_messages_sent, timedelta(days=self.key_expiry_in_days))
             logger.debug(f"Default value set for redis_key: {redis_key}")
             
         return int(kafka_messages_sent)
@@ -127,7 +129,7 @@ class MessageService:
         if remote_count is None:
             remote_count = "0"
         kafka_messages_sent = count + int(remote_count)
-        message_helper.redis.set(key=redis_key, value=kafka_messages_sent, expiry=timedelta(days=1))
+        message_helper.redis.set(key=redis_key, value=kafka_messages_sent, expiry=timedelta(days=self.key_expiry_in_days))
         
             
     def get_report(self):

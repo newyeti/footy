@@ -38,6 +38,7 @@ class MessageConfig(BaseModel):
     kafka_daily_limit: int
     kafka_per_second_limit: int
     redis_daily_limit: int
+    key_expiry_in_days: int
     
 class CliAppConfig(BaseModel):
     stacks: list[Stack]

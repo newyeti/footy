@@ -80,7 +80,7 @@ async def run(app_config: CliAppConfig, services: list[str], service: str, seaso
         # store sent message count in redis database
         for key, value in report.items():
             redis_key = redis_control.get_key(prefix=str(season), key=key, suffix=None)
-            redis_control.set(key=redis_key, value=value, expiry=timedelta(days=7))
+            redis_control.set(key=redis_key, value=value, expiry=timedelta(days=app_config.message.key_expiry_in_days))
     
     return report
     
