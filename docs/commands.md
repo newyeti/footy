@@ -5,7 +5,7 @@
 ```
 python3 app/entrypoints/cmd/main.py \
     -season 2010 \
-    -loc /Users/sachindra.maharjan/Documents/pl/leagueID_701 \
+    -loc $CSV_FILE_PATH/leagueID_701 \
     -service all
 ```
 
@@ -13,7 +13,7 @@ python3 app/entrypoints/cmd/main.py \
 ```
 python3 app/entrypoints/cmd/main.py \
     -season 2011 \
-    -loc /Users/sachindra.maharjan/Documents/pl/leagueID_700 \
+    -loc $CSV_FILE_PATH/leagueID_700 \
     -service all
 ```
 
@@ -21,7 +21,7 @@ python3 app/entrypoints/cmd/main.py \
 ```
 python3 app/entrypoints/cmd/main.py \
     -season 2012 \
-    -loc /Users/sachindra.maharjan/Documents/pl/leagueID_699 \
+    -loc $CSV_FILE_PATH/leagueID_699 \
     -service all
 ```
 
@@ -29,7 +29,7 @@ python3 app/entrypoints/cmd/main.py \
 ```
 python3 app/entrypoints/cmd/main.py \
     -season 2013 \
-    -loc /Users/sachindra.maharjan/Documents/pl/leagueID_698 \
+    -loc $CSV_FILE_PATH/leagueID_698 \
     -service all
 ```
 
@@ -37,15 +37,15 @@ python3 app/entrypoints/cmd/main.py \
 ```
 python3 app/entrypoints/cmd/main.py \
     -season 2014 \
-    -loc /Users/sachindra.maharjan/Documents/pl/leagueID_697 \
+    -loc $CSV_FILE_PATH/leagueID_697 \
     -service all
 ```
 
 ## 2015 season
 ```
 python3 app/entrypoints/cmd/main.py \
-    -season 2014 \
-    -loc /Users/sachindra.maharjan/Documents/pl/leagueID_696 \
+    -season 2015 \
+    -loc $CSV_FILE_PATH/leagueID_696 \
     -service all
 ```
 
@@ -53,7 +53,7 @@ python3 app/entrypoints/cmd/main.py \
 ```
 python3 app/entrypoints/cmd/main.py \
     -season 2016 \
-    -loc /Users/sachindra.maharjan/Documents/pl/leagueID_56 \
+    -loc $CSV_FILE_PATH/leagueID_56 \
     -service all
 ```
 
@@ -61,7 +61,7 @@ python3 app/entrypoints/cmd/main.py \
 ```
 python3 app/entrypoints/cmd/main.py \
     -season 2017 \
-    -loc /Users/sachindra.maharjan/Documents/pl/leagueID_37 \
+    -loc $CSV_FILE_PATH/leagueID_37 \
     -service all
 ```
 
@@ -69,7 +69,7 @@ python3 app/entrypoints/cmd/main.py \
 ```
 python3 app/entrypoints/cmd/main.py \
     -season 2018 \
-    -loc /Users/sachindra.maharjan/Documents/pl/leagueID_2 \
+    -loc $CSV_FILE_PATH/leagueID_2 \
     -service all
 ```
 
@@ -77,7 +77,7 @@ python3 app/entrypoints/cmd/main.py \
 ```
 python3 app/entrypoints/cmd/main.py \
     -season 2019 \
-    -loc /Users/sachindra.maharjan/Documents/pl/leagueID_524 \
+    -loc $CSV_FILE_PATH/leagueID_524 \
     -service all
 ```
 
@@ -85,7 +85,7 @@ python3 app/entrypoints/cmd/main.py \
 ```
 python3 app/entrypoints/cmd/main.py \
     -season 2020 \
-    -loc /Users/sachindra.maharjan/Documents/pl/leagueID_2790 \
+    -loc $CSV_FILE_PATH/leagueID_2790 \
     -service all
 ```
 
@@ -93,7 +93,7 @@ python3 app/entrypoints/cmd/main.py \
 ```
 python3 app/entrypoints/cmd/main.py \
     -season 2021 \
-    -loc /Users/sachindra.maharjan/Documents/pl/leagueID_3456 \
+    -loc $CSV_FILE_PATH/leagueID_3456 \
     -service all
 ```
 
@@ -101,7 +101,7 @@ python3 app/entrypoints/cmd/main.py \
 ```
 python3 app/entrypoints/cmd/main.py \
     -season 2022 \
-    -loc /Users/sachindra.maharjan/Documents/pl/leagueID_4335 \
+    -loc $CSV_FILE_PATH/leagueID_4335 \
     -service all
 ```
 

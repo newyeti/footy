@@ -3,8 +3,8 @@ stack:
   base_url: https://api.upstash.com/v2
   projects:
     - name: newyeti-1
-      email: ${NEWYETI_PROD_CLUSTER1_EMAIL}
-      api_key: ${NEWYETI_PROD_CLUSTER1_KEY}
+      email: ${NEWYETI_WORKER_CLUSTER1_EMAIL}
+      api_key: ${NEWYETI_WORKER_CLUSTER1_KEY}
       kafka:
         endpoint: /kafka
         cluster:
@@ -42,8 +42,8 @@ stack:
             - us-west-1
             tls: true
     - name: newyeti-1
-      email: ${NEWYETI_PROD_CLUSTER2_EMAIL}
-      api_key: ${NEWYETI_PROD_CLUSTER2_KEY}
+      email: ${NEWYETI_WORKER_CLUSTER2_EMAIL}
+      api_key: ${NEWYETI_WORKER_CLUSTER2_KEY}
       kafka:
         endpoint: /kafka
         cluster:
@@ -81,8 +81,8 @@ stack:
             - us-west-1
             tls: true
     - name: newyeti-1
-      email: ${NEWYETI_PROD_CLUSTER3_EMAIL}
-      api_key: ${NEWYETI_PROD_CLUSTER3_KEY}
+      email: ${NEWYETI_WORKER_CLUSTER3_EMAIL}
+      api_key: ${NEWYETI_WORKER_CLUSTER3_KEY}
       kafka:
         endpoint: /kafka
         cluster:
@@ -120,8 +120,8 @@ stack:
             - us-west-1
             tls: true
     - name: newyeti-test
-      email: ${NEWYETI_PROD_CLUSTER0_EMAIL}
-      api_key: ${NEWYETI_PROD_CLUSTER0_KEY}
+      email: ${NEWYETI_TEST_CLUSTER_EMAIL}
+      api_key: ${NEWYETI_TEST_CLUSTER_KEY}
       kafka:
         endpoint: /kafka
         cluster:

@@ -2,13 +2,13 @@ defaults:
   - stack
   - service
   - _self_
-  
+
 app:
   name: Telemetry CLI
-  stacks: 
-  - ${newyeti-1}
-  - ${newyeti-2}
-  - ${newyeti-3}
+  stacks:
+    - ${newyeti-1}
+    - ${newyeti-2}
+    - ${newyeti-3}
   control:
     redis:
       client_id: ${oc.env:NEWYETI_CONTROL_CLIENT_ID}-redis
