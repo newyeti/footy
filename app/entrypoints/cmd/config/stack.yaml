@@ -1,42 +1,42 @@
 newyeti-1:
   redis:
-    client_id: ${oc.env:NEWYETI1_CLIENT_ID}-redis
-    host: ${oc.env:NEWYETI1_REDIS_HOST}
-    port: ${oc.env:NEWYETI1_REDIS_PORT}
-    password: ${oc.env:NEWYETI1_REDIS_PASSWORD}
+    client_id: ${oc.env:NEWYETI_WORKER1_CLIENT_ID}-redis
+    host: ${oc.env:NEWYETI_WORKER1_REDIS_HOST}
+    port: ${oc.env:NEWYETI_WORKER1_REDIS_PORT}
+    password: ${oc.env:NEWYETI_WORKER1_REDIS_PASSWORD}
   kafka: 
     bootstrap_servers: 
-      - ${oc.env:NEWYETI1_KAFKA_BOOTSTRAP_SERVERS}
-    client_id: ${oc.env:NEWYETI1_CLIENT_ID}-kafka
+      - ${oc.env:NEWYETI_WORKER1_KAFKA_BOOTSTRAP_SERVERS}
+    client_id: ${oc.env:NEWYETI_WORKER1_CLIENT_ID}-kafka
     sasl_mechanism: SCRAM-SHA-256
     security_protocol: SASL_SSL
-    sasl_plain_username: ${oc.env:NEWYETI1_KAFKA_USERNAME}
-    sasl_plain_password: ${oc.env:NEWYETI1_KAFKA_PASSWORD}
+    sasl_plain_username: ${oc.env:NEWYETI_WORKER1_KAFKA_USERNAME}
+    sasl_plain_password: ${oc.env:NEWYETI_WORKER1_KAFKA_PASSWORD}
 newyeti-2:
   redis:
-    client_id: ${oc.env:NEWYETI2_CLIENT_ID}-redis
-    host: ${oc.env:NEWYETI2_REDIS_HOST}
-    port: ${oc.env:NEWYETI2_REDIS_PORT}
-    password: ${oc.env:NEWYETI2_REDIS_PASSWORD}
+    client_id: ${oc.env:NEWYETI_WORKER2_CLIENT_ID}-redis
+    host: ${oc.env:NEWYETI_WORKER2_REDIS_HOST}
+    port: ${oc.env:NEWYETI_WORKER2_REDIS_PORT}
+    password: ${oc.env:NEWYETI_WORKER2_REDIS_PASSWORD}
   kafka: 
     bootstrap_servers: 
-      - ${oc.env:NEWYETI2_KAFKA_BOOTSTRAP_SERVERS}
-    client_id: ${oc.env:NEWYETI2_CLIENT_ID}-kafka
+      - ${oc.env:NEWYETI_WORKER2_KAFKA_BOOTSTRAP_SERVERS}
+    client_id: ${oc.env:NEWYETI_WORKER2_CLIENT_ID}-kafka
     sasl_mechanism: SCRAM-SHA-256
     security_protocol: SASL_SSL
-    sasl_plain_username: ${oc.env:NEWYETI2_KAFKA_USERNAME}
-    sasl_plain_password: ${oc.env:NEWYETI2_KAFKA_PASSWORD}
+    sasl_plain_username: ${oc.env:NEWYETI_WORKER2_KAFKA_USERNAME}
+    sasl_plain_password: ${oc.env:NEWYETI_WORKER2_KAFKA_PASSWORD}
 newyeti-3:
   redis:
-    client_id: ${oc.env:NEWYETI3_CLIENT_ID}-redis
-    host: ${oc.env:NEWYETI3_REDIS_HOST}
-    port: ${oc.env:NEWYETI3_REDIS_PORT}
-    password: ${oc.env:NEWYETI3_REDIS_PASSWORD}
+    client_id: ${oc.env:NEWYETI_WORKER3_CLIENT_ID}-redis
+    host: ${oc.env:NEWYETI_WORKER3_REDIS_HOST}
+    port: ${oc.env:NEWYETI_WORKER3_REDIS_PORT}
+    password: ${oc.env:NEWYETI_WORKER3_REDIS_PASSWORD}
   kafka: 
     bootstrap_servers: 
-      - ${oc.env:NEWYETI3_KAFKA_BOOTSTRAP_SERVERS}
-    client_id: ${oc.env:NEWYETI3_CLIENT_ID}-kafka
+      - ${oc.env:NEWYETI_WORKER3_KAFKA_BOOTSTRAP_SERVERS}
+    client_id: ${oc.env:NEWYETI_WORKER3_CLIENT_ID}-kafka
     sasl_mechanism: SCRAM-SHA-256
     security_protocol: SASL_SSL
-    sasl_plain_username: ${oc.env:NEWYETI3_KAFKA_USERNAME}
-    sasl_plain_password: ${oc.env:NEWYETI3_KAFKA_PASSWORD}
+    sasl_plain_username: ${oc.env:NEWYETI_WORKER3_KAFKA_USERNAME}
+    sasl_plain_password: ${oc.env:NEWYETI_WORKER3_KAFKA_PASSWORD}
