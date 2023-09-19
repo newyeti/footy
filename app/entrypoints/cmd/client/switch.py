@@ -58,7 +58,7 @@ class Switch:
         
         try:
             teams = data_reader.read()
-        except ValueError as e:
+        except (ValueError, FileNotFoundError) as e:
             logger.error(f"Unable to read file {file} because {e}")
             return
         
@@ -91,7 +91,7 @@ class Switch:
         data_reader = FixtureDataReader(file=file)
         try:
             fixtures = data_reader.read()
-        except ValueError as e:
+        except (ValueError, FileNotFoundError) as e:
             logger.error(f"Unable to read file {file} because {e}")
             return []
     
@@ -142,7 +142,7 @@ class Switch:
         data_reader = FixtureEventDataReader(file=file)
         try:
             events = data_reader.read()
-        except ValueError as e:
+        except (ValueError, FileNotFoundError) as e:
             logger.error(f"Unable to read file {file} because {e}")
             return
     
@@ -189,7 +189,7 @@ class Switch:
         
         try:
             lineups = data_reader.read()
-        except ValueError as e:
+        except (ValueError, FileNotFoundError) as e:
             logger.error(f"Unable to read file {file} because {e}")
             return
          
@@ -228,7 +228,7 @@ class Switch:
         
         try:
             player_stats = data_reader.read()
-        except ValueError as e:
+        except (ValueError, FileNotFoundError) as e:
             logger.error(f"Unable to read file {file} because {e}")
             return
         
@@ -264,7 +264,7 @@ class Switch:
         
         try:    
             top_scorers = data_reader.read()
-        except ValueError as e:
+        except (ValueError, FileNotFoundError) as e:
             logger.error(f"Unable to read file {file} because {e}")
             return
         

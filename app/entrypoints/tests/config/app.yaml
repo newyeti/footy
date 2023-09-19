@@ -10,10 +10,10 @@ app:
   service: ${service}
   control:
     redis:
-      client_id: ${oc.env:NEWYETI0_CLIENT_ID}-redis
-      host: ${oc.env:NEWYETI0_REDIS_HOST}
-      port: ${oc.env:NEWYETI0_REDIS_PORT}
-      password: ${oc.env:NEWYETI0_REDIS_PASSWORD}
+      client_id: ${oc.env:NEWYETI_TEST_CLIENT_ID}-redis
+      host: ${oc.env:NEWYETI_TEST_REDIS_HOST}
+      port: ${oc.env:NEWYETI_TEST_REDIS_PORT}
+      password: ${oc.env:NEWYETI_TEST_REDIS_PASSWORD}
   message:
     batch_size: 10
     kafka_daily_limit: 10000
