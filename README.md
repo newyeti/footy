@@ -185,6 +185,13 @@ Alternatively, python script can be used.
 python3 ./app/entrypoints/cmd/main.py -season=2023 -service=all -loc=/home/user/tmp
 ```
 
+Please refer to [commands.md](docs/commands.md) for additional commands.
+
+For more information on the script,
+```bash
+python3 app/entrypoints/cmd/main.py -h
+```
+
 Available services are:
 - teams
 - fixtures
