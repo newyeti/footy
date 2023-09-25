@@ -1,6 +1,6 @@
-# Telemetry
+# Footy
 
-![Data Import Architecture](docs/images/architecture.png?raw=true "Data Import Architecture")
+![Footy Data Import Architecture](docs/images/architecture.png?raw=true "Footy Data Import Architecture")
 
 ## Componenets
 - File Storage - Local file storage
