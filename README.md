@@ -1,5 +1,23 @@
 # Telemetry
 
+![Data Import Architecture](docs/images/architecture.png?raw=true "Data Import Architecture")
+
+## Componenets
+- File Storage - Local file storage
+- Python Script - Script to import the data. It connects with Control Redis Cache and worker nodes.
+- Control Redis Cache - It stores the count of data imported for each service. It helps to avoid duplicate data sent to Kafka nodes.
+- Worker Nodes - Worker nodes consist of Kafka and Redis instance. Upstash Kafka instance has limitation of 10000 messages per days. Each Redis stores the total messages sent in a day. When the limit exceeds, the next worker node is used.
+- Connectors - Kafka topics connect with MongoDB and BiqQuery using the connectors. 
+- Data Storage - MongoDB and BigQuery are used as data storage in the project.
+
+## Services
+- Teams
+- Fixtures
+- Fixture Line Ups
+- Fixture Events
+- Fixture Player Statistics
+- Top Scorers
+
 ## Project Setup
 
 ```
