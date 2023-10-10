@@ -1,7 +1,0 @@
-fastapi[all]
-uvicorn[standard]
-starlette
-pymongo
-pytest
-asyncio
-aiohttp
