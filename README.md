@@ -84,7 +84,7 @@ API Secret Configuration
     "key": "",
     "email": ""
   },
-  "test_cluster": {
+  "dev": {
     "key": "",
     "email": ""
   }
@@ -142,7 +142,7 @@ Application Secret Configuration
       "password": ""
     }
   },
-  "test_cluster": {
+  "dev": {
     "kafka": {
       "bootstrap_servers": "",
       "username": "",

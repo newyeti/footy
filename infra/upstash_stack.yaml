@@ -2,6 +2,45 @@
 stack:
   base_url: https://api.upstash.com/v2
   projects:
+    - name: newyeti-control
+      email: ${NEWYETI_CONTROL_EMAIL}
+      api_key: ${NEWYETI_CONTROL_KEY}
+      kafka:
+        endpoint: /kafka
+        cluster:
+          name: newyeti-control
+          properties:
+            name: newyeti-control
+            region: us-east-1
+            multizone: true
+          topics:
+          - teams
+          - fixtures
+          - fixture_events
+          - fixture_lineups
+          - fixture_player_stats
+          - top_scorers
+          - deadletterqueue
+          connectors:
+          - mongo.sink.teams
+          - mongo.sink.fixtures
+          - mongo.sink.fixture_events
+          - mongo.sink.fixture_lineups
+          - mongo.sink.fixture_player_stats
+          - mongo.sink.top_scorers
+          - bq.nopart.sink
+          - bq.part.sink
+      redis:
+        endpoint: /redis
+        database: 
+          name: newyeti-control
+          properties:
+            name: newyeti-control
+            region: global
+            primary_region: us-east-1
+            read_regions:
+            - us-west-1
+            tls: true
     - name: newyeti-1
       email: ${NEWYETI_WORKER_CLUSTER1_EMAIL}
       api_key: ${NEWYETI_WORKER_CLUSTER1_KEY}
@@ -41,7 +80,7 @@ stack:
             read_regions:
             - us-west-1
             tls: true
-    - name: newyeti-1
+    - name: newyeti-2
       email: ${NEWYETI_WORKER_CLUSTER2_EMAIL}
       api_key: ${NEWYETI_WORKER_CLUSTER2_KEY}
       kafka:
@@ -80,7 +119,7 @@ stack:
             read_regions:
             - us-west-1
             tls: true
-    - name: newyeti-1
+    - name: newyeti-3
       email: ${NEWYETI_WORKER_CLUSTER3_EMAIL}
       api_key: ${NEWYETI_WORKER_CLUSTER3_KEY}
       kafka:
@@ -119,9 +158,9 @@ stack:
             read_regions:
             - us-west-1
             tls: true
-    - name: newyeti-test
-      email: ${NEWYETI_TEST_CLUSTER_EMAIL}
-      api_key: ${NEWYETI_TEST_CLUSTER_KEY}
+    - name: newyeti-dev
+      email: ${NEWYETI_DEV_EMAIL}
+      api_key: ${NEWYETI_DEV_KEY}
       kafka:
         endpoint: /kafka
         cluster:
@@ -157,6 +196,7 @@ stack:
             read_regions:
             - us-west-1
             tls: true
+
   topic_configuration:
     teams:
       name: newyeti.source.teams.v1

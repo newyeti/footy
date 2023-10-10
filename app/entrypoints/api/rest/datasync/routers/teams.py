@@ -26,7 +26,7 @@ CommonsDependency = Annotated[CommonPathParams, Depends()]
           response_model=ServiceResponse)
 async def sync_teams(path_params: CommonsDependency) -> Any:
     
-    logger.info(f"calling endpoint=/teams/{path_params.season}/{path_params.league_id}")
+    logger.debug(f"calling endpoint=/teams/{path_params.season}/{path_params.league_id}")
     
     
     url = f"https://{rapid_api_hostname}/v3/teams"

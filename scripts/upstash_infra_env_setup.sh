@@ -14,14 +14,14 @@ get_mongo_credentials() {
     echo $( jq -r  $json_key <<< "${mongo_credentials}" )
 }
 
-echo $(upstash_cluster_api_keys '.test_cluster.key')
-echo $(upstash_cluster_api_keys ".test_cluster.email")
+echo $(upstash_cluster_api_keys '.dev.key')
+echo $(upstash_cluster_api_keys ".dev.email")
 
 echo "Setting up application envrionment variables"
 
 # API Keys
-export NEWYETI_TEST_CLUSTER_KEY=$(upstash_cluster_api_keys '.cluster_test.key')
-export NEWYETI_TEST_CLUSTER_EMAIL=$(upstash_cluster_api_keys ".cluster_test.email")
+export NEWYETI_CONTROL_KEY=$(upstash_cluster_api_keys '.control_cluster.key')
+export NEWYETI_CONTROL_EMAIL=$(upstash_cluster_api_keys ".control_cluster.email")
 
 export NEWYETI_WORKER_CLUSTER1_KEY=$(upstash_cluster_api_keys '.worker_cluster_1.key')
 export NEWYETI_WORKER_CLUSTER1_EMAIL=$(upstash_cluster_api_keys ".worker_cluster_1.email")
@@ -32,8 +32,8 @@ export NEWYETI_WORKER_CLUSTER2_EMAIL=$(upstash_cluster_api_keys ".worker_cluster
 export NEWYETI_WORKER_CLUSTER3_KEY=$(upstash_cluster_api_keys '.worker_cluster_3.key')
 export NEWYETI_WORKER_CLUSTER3_EMAIL=$(upstash_cluster_api_keys ".worker_cluster_3.email")
 
-export NEWYETI_TEST_CLUSTER_KEY=$(upstash_cluster_api_keys '.test_cluster.key')
-export NEWYETI_TEST_CLUSTER_EMAIL=$(upstash_cluster_api_keys ".test_cluster.email")
+export NEWYETI_DEV_KEY=$(upstash_cluster_api_keys '.dev.key')
+export NEWYETI_DEV_EMAIL=$(upstash_cluster_api_keys ".dev.email")
 
 # Database
 export MONGO_HOSTNAME=$(get_mongo_credentials '.prod.hostname')

@@ -15,13 +15,13 @@ export CSV_FILE_PATH=/Users/sachindra.maharjan/Documents/pl/leagueID_696
 
 #Application
 export NEWYETI_TEST_CLIENT_ID=newyeti_test_client
-export NEWYETI_TEST_REDIS_HOST=$(get_infra_credentials '.test_cluster.redis.hostname')
-export NEWYETI_TEST_REDIS_PORT=$(get_infra_credentials '.test_cluster.redis.port')
-export NEWYETI_TEST_REDIS_PASSWORD=$(get_infra_credentials '.test_cluster.redis.password')
+export NEWYETI_TEST_REDIS_HOST=$(get_infra_credentials '.dev.redis.hostname')
+export NEWYETI_TEST_REDIS_PORT=$(get_infra_credentials '.dev.redis.port')
+export NEWYETI_TEST_REDIS_PASSWORD=$(get_infra_credentials '.dev.redis.password')
 export NEWYETI_TEST_REDIS_SSL_ENABLED=TRUE
-export NEWYETI_TEST_KAFKA_BOOTSTRAP_SERVERS=$(get_infra_credentials '.test_cluster.kafka.bootstrap_servers')
-export NEWYETI_TEST_KAFKA_USERNAME=$(get_infra_credentials '.test_cluster.kafka.username')
-export NEWYETI_TEST_KAFKA_PASSWORD=$(get_infra_credentials '.test_cluster.kafka.password')
+export NEWYETI_TEST_KAFKA_BOOTSTRAP_SERVERS=$(get_infra_credentials '.dev.kafka.bootstrap_servers')
+export NEWYETI_TEST_KAFKA_USERNAME=$(get_infra_credentials '.dev.kafka.username')
+export NEWYETI_TEST_KAFKA_PASSWORD=$(get_infra_credentials '.dev.kafka.password')
 
 export NEWYETI_WORKER1_CLIENT_ID=newyeti_worker1_client
 export NEWYETI_WORKER1_REDIS_HOST=$(get_infra_credentials '.worker_cluster_1.redis.hostname')

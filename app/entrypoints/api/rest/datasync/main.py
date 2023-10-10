@@ -23,10 +23,8 @@ from app.entrypoints.api.rest.datasync.routers import teams
 
 
 # Application
-app = FastAPI()
+app = FastAPI(title= "Footy Data Sync API", version="v1.0")
 app.include_router(teams.router)
-# app.exception_handler()
-# app.middleware()
 
 # Decorators
 @app.exception_handler(ServiceException)
@@ -48,4 +46,4 @@ async def add_process_time_header(request: Request, call_next):
 
 @app.get("/")
 async def health():
-    return {"status": "ok"}
+    return {"status": "running"}
