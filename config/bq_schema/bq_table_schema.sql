@@ -132,3 +132,14 @@ ALTER TABLE `newyeti.football.fixture_events` ADD PRIMARY KEY (season, league_id
 ALTER TABLE `newyeti.football.fixture_lineups` ADD PRIMARY KEY (season, league_id, fixture_id, team_id) NOT ENFORCED;
 ALTER TABLE `newyeti.football.fixture_player_stats` ADD PRIMARY KEY (season, league_id, fixture_id, team_id, player_id, event_date) NOT ENFORCED;
 ALTER TABLE `newyeti.football.top_scorers` ADD PRIMARY KEY (season, league_id, player_id) NOT ENFORCED;
+
+ALTER TABLE `newyeti.football.fixtures`
+ADD COLUMN city STRING, 
+ADD COLUMN _id STRING, 
+ADD COLUMN createdAt TIMESTAMP,
+ADD COLUMN updatedAt TIMESTAMP;
+
+ALTER TABLE `newyeti.football.teams`
+ADD COLUMN _id STRING, 
+ADD COLUMN createdAt TIMESTAMP,
+ADD COLUMN updatedAt TIMESTAMP;
